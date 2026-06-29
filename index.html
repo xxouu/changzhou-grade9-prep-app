@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>常州初三预习助手</title>
+    <link rel="stylesheet" href="./src/styles.css?v=20260628-depth121" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="学科导航">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">九</div>
+          <div>
+            <p class="eyebrow">江苏常州</p>
+            <h1>初三预习助手</h1>
+          </div>
+        </div>
+        <nav id="subjectNav" class="subject-nav"></nav>
+        <section class="version-card">
+          <p class="eyebrow">教材版本</p>
+          <div id="versionList"></div>
+          <button id="reviewerToggle" class="ghost-button" type="button">切换校对视图</button>
+        </section>
+      </aside>
+
+      <main class="main-view">
+        <section class="subject-view" data-view-panel="subject" hidden>
+        <section class="panel subject-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">课程预习库</p>
+              <h3 id="subjectTitle">英语</h3>
+            </div>
+            <span id="subjectVersion" class="badge"></span>
+          </div>
+          <div id="activityLibrary" class="library-grid"></div>
+          <div id="coverageSummary" class="coverage-summary" aria-label="内容覆盖检查"></div>
+          <div id="reviewCoverage" class="review-coverage" aria-label="校对覆盖工作台"></div>
+          <div id="subjectKnowledgeBank" class="subject-knowledge-bank-wrap" aria-label="学科知识点总库"></div>
+          <div id="chapterIndex" class="chapter-index" aria-label="章节概览"></div>
+        </section>
+        </section>
+
+        <section class="home-view" data-view-panel="home">
+        <section class="hero-panel" aria-label="今日学习概览">
+          <div>
+            <p class="eyebrow">今日 20-30 分钟</p>
+            <h2>先英语建立手感，再用数学找薄弱点。</h2>
+            <p class="hero-copy">内容已按孩子自主预习路径编排，进度只保存在当前浏览器。</p>
+            <div class="hero-actions">
+              <button id="continueButton" class="primary-button" type="button">继续今日任务</button>
+              <button id="resetButton" class="ghost-button" type="button">重置演示进度</button>
+            </div>
+          </div>
+          <div class="study-visual" aria-hidden="true">
+            <div class="orbital">
+              <span>英</span>
+              <span>数</span>
+              <span>语</span>
+              <span>理</span>
+              <span>化</span>
+            </div>
+            <div class="visual-card">
+              <strong>今日目标</strong>
+              <span>词卡 8 分钟</span>
+              <span>数学 19 分钟</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="metrics-grid" aria-label="学习指标">
+          <article>
+            <span>连续学习</span>
+            <strong id="streakValue">0 天</strong>
+          </article>
+          <article>
+            <span>英语词卡</span>
+            <strong id="flashcardValue">0/0</strong>
+          </article>
+          <article>
+            <span>数学薄弱点</span>
+            <strong id="weakValue">暂无</strong>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel today-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">今日任务</p>
+                <h3>今天先做这几项</h3>
+              </div>
+              <span id="modeBadge" class="badge">孩子视图</span>
+            </div>
+            <div id="adaptiveSession" class="adaptive-session" aria-label="今日智能预习路线"></div>
+            <div id="todayPlan" class="task-list"></div>
+          </div>
+
+          <div class="panel review-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">今日复习队列</p>
+                <h3>先处理不会和错题</h3>
+              </div>
+              <span id="reviewCount" class="badge">0 项</span>
+            </div>
+            <div id="reviewQueue" class="review-list"></div>
+          </div>
+
+          <div class="panel flashcard-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">英语闪卡</p>
+                <h3 id="cardWord">forecast</h3>
+              </div>
+              <span id="cardCounter" class="badge">1/5</span>
+            </div>
+            <p id="cardMeaning" class="meaning"></p>
+            <div id="cardExample" class="flashcard-example" hidden></div>
+            <div class="card-tools">
+              <button id="cardDirectionButton" class="ghost-button compact-button" type="button">英 → 中</button>
+              <button id="cardRevealButton" class="primary-button compact-button" type="button">显示答案</button>
+            </div>
+            <div class="segmented" aria-label="词卡掌握度">
+              <button data-card-status="known" type="button">认识</button>
+              <button data-card-status="fuzzy" type="button">模糊</button>
+              <button data-card-status="unknown" type="button">不会</button>
+            </div>
+            <div class="daily-word-mission" aria-label="每日单词任务">
+              <div>
+                <span id="dailyWordUnit">Unit 1</span>
+                <strong id="dailyWordDay">Day 1</strong>
+              </div>
+              <p id="dailyWordSummary"></p>
+              <div id="dailyWordList" class="daily-word-list"></div>
+              <button id="dailyWordKnownButton" class="ghost-button compact-button" type="button">本组都认识</button>
+            </div>
+          </div>
+
+          <div class="panel grammar-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">英语语法快练</p>
+                <h3 id="grammarTitle">语法点</h3>
+              </div>
+              <span id="grammarCounter" class="badge">1/24</span>
+            </div>
+            <p id="grammarUnit" class="knowledge-context"></p>
+            <p id="grammarExplanation" class="knowledge-explanation"></p>
+            <div class="grammar-cue">
+              <p><span>例句</span><strong id="grammarExample"></strong></p>
+              <p><span>检查</span><strong id="grammarCheckpoint"></strong></p>
+            </div>
+            <p id="grammarQuestion" class="question"></p>
+            <div id="grammarPracticeEvidence" class="grammar-practice-evidence"></div>
+            <div id="grammarChoices" class="choice-grid"></div>
+            <div id="grammarFeedback" class="feedback"></div>
+          </div>
+
+          <div class="panel math-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">数学练习</p>
+                <h3 id="mathConcept">二次函数顶点</h3>
+              </div>
+              <span id="mathDifficulty" class="badge">基础</span>
+            </div>
+            <p id="mathQuestion" class="question"></p>
+            <div id="mathChoices" class="choice-grid"></div>
+            <div id="mathFeedback" class="feedback"></div>
+            <div class="math-advice" aria-label="数学下一步建议">
+              <div>
+                <span>下一步建议</span>
+                <strong id="mathAdviceFocus">二次函数图像预热</strong>
+              </div>
+              <p id="mathAdviceReason"></p>
+              <ol id="mathAdviceSteps"></ol>
+            </div>
+          </div>
+
+          <div class="panel knowledge-review-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">知识快复习</p>
+                <h3 id="knowledgeConcept">五科知识卡</h3>
+              </div>
+              <span id="knowledgeCounter" class="badge">1/0</span>
+            </div>
+            <p id="knowledgeSubject" class="knowledge-context"></p>
+            <p id="knowledgeExplanation" class="knowledge-explanation"></p>
+            <div class="knowledge-cue">
+              <p><span>考法</span><strong id="knowledgeExamCue"></strong></p>
+              <p><span>易错</span><strong id="knowledgeTrap"></strong></p>
+              <p><span>回忆</span><strong id="knowledgeRetrieval"></strong></p>
+            </div>
+            <div id="knowledgeRecallDraft" class="knowledge-recall-draft"></div>
+            <div class="segmented" aria-label="知识卡掌握度">
+              <button data-knowledge-status="known" type="button">掌握</button>
+              <button data-knowledge-status="learning" type="button">再练</button>
+              <button data-knowledge-status="weak" type="button">不熟</button>
+            </div>
+          </div>
+
+          <div class="panel quick-practice-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">五科快测</p>
+                <h3 id="quickPracticeTitle">随堂自测</h3>
+              </div>
+              <span id="quickPracticeCounter" class="badge">1/0</span>
+            </div>
+            <p id="quickPracticeContext" class="knowledge-context"></p>
+            <p id="quickPracticeQuestion" class="question"></p>
+            <div id="quickPracticeChoices" class="choice-grid"></div>
+            <div id="quickPracticeFeedback" class="feedback"></div>
+          </div>
+
+          <div class="panel dictation-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">语文默写</p>
+                <h3 id="dictationWord">妖娆</h3>
+              </div>
+              <span id="dictationCounter" class="badge">1/0</span>
+            </div>
+            <p id="dictationContext" class="knowledge-context"></p>
+            <p id="dictationPrompt" class="knowledge-explanation"></p>
+            <div id="dictationDraft" class="dictation-draft"></div>
+            <div class="segmented" aria-label="默写掌握度">
+              <button data-dictation-status="known" type="button">会写</button>
+              <button data-dictation-status="learning" type="button">再练</button>
+              <button data-dictation-status="weak" type="button">不会写</button>
+            </div>
+          </div>
+
+          <div class="panel writing-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">语文写作迁移</p>
+                <h3 id="writingLesson">课文输出</h3>
+              </div>
+              <span id="writingCounter" class="badge">1/0</span>
+            </div>
+            <p id="writingContext" class="knowledge-context"></p>
+            <p id="writingTask" class="knowledge-explanation"></p>
+            <div id="writingSelfCheck" class="writing-self-check" aria-label="写作自评">
+              <label><input id="writingEvidenceCheck" type="checkbox" checked />有文本依据</label>
+              <label><input id="writingStructureCheck" type="checkbox" checked />结构完整</label>
+              <label><input id="writingLanguageCheck" type="checkbox" checked />语言有迁移</label>
+            </div>
+            <button id="writingDoneButton" class="primary-button compact-button writing-action" type="button">
+              完成本课迁移
+            </button>
+          </div>
+        </section>
+        </section>
+
+      </main>
+    </div>
+
+    <script type="module" src="./src/app.mjs?v=20260628-depth121"></script>
+  </body>
+</html>
