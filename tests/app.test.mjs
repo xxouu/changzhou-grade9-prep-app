@@ -206,6 +206,20 @@ test("mobile English phrase rows keep horizontal breathing room", () => {
   assert.match(mobileBlock, /\.phrase-row \.speak-button\s*\{[\s\S]*?justify-self:\s*end/);
 });
 
+test("desktop English phrase rows use a breathable grid layout", () => {
+  const phraseBlock = stylesSource.match(/\.phrase-row\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+  const phraseItemBlock = stylesSource.match(/\.phrase-row span\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+  const phraseButtonBlock = stylesSource.match(/\.phrase-row \.speak-button\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+
+  assert.match(phraseBlock, /display:\s*grid/);
+  assert.match(phraseBlock, /grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(220px,\s*1fr\)\)/);
+  assert.match(phraseBlock, /gap:\s*12px/);
+  assert.match(phraseItemBlock, /grid-template-columns:\s*minmax\(0,\s*1fr\)\s*34px/);
+  assert.match(phraseItemBlock, /min-height:\s*58px/);
+  assert.match(phraseItemBlock, /padding:\s*10px 12px/);
+  assert.match(phraseButtonBlock, /justify-self:\s*end/);
+});
+
 test("mobile English section headers and content keep side gutters", () => {
   const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
 
