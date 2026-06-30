@@ -2859,15 +2859,21 @@ body[data-view="home"] .version-card {
 
 .stem-point-list {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .stem-point-card {
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 8px;
-  padding: 11px 12px;
-  border-radius: 8px;
-  background: #f7faf5;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #edf2ea;
+  background: transparent;
+}
+
+.stem-point-card:last-child {
+  border-bottom: 0;
 }
 
 .stem-point-card strong {
@@ -2876,23 +2882,7 @@ body[data-view="home"] .version-card {
   line-height: 1.35;
 }
 
-.stem-point-card p,
-.stem-point-card em {
-  margin: 0;
-  color: #5b6b5e;
-  font-size: 13px;
-  font-style: normal;
-  line-height: 1.55;
-}
-
-.stem-point-card div {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 8px;
-  align-items: start;
-}
-
-.stem-point-card span,
+.stem-point-label,
 .stem-support-row b,
 .stem-practice-card-head em,
 .stem-practice-card small {
@@ -6644,10 +6634,6 @@ body[data-view="home"] .version-card {
 
   .stem-study-layout {
     padding: 14px;
-  }
-
-  .stem-point-card div {
-    grid-template-columns: 1fr;
   }
 
   .lesson-list {

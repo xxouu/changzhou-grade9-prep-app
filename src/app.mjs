@@ -4,7 +4,7 @@ import {
   getReviewCoverageSummary,
   getSubjectChapterIndex,
   subjectOrder,
-} from "./content.mjs?v=20260628-depth124";
+} from "./content.mjs?v=20260628-depth125";
 import {
   STORAGE_KEY,
   answerGrammarQuiz,
@@ -69,7 +69,7 @@ import {
   updateSelfCheckProgress,
   updateStudyOutputProgress,
   updateWritingMissionProgress,
-} from "./progress.mjs?v=20260628-depth124";
+} from "./progress.mjs?v=20260628-depth125";
 
 const state = {
   view: "home",
@@ -1510,7 +1510,7 @@ function renderStemKnowledgeSection(subjectId, chapter) {
   const lessonBlocks = chapter.lessons
     .map((lesson, lessonIndex) => {
       const points = (lesson.keyPoints ?? [])
-        .map((point, pointIndex) => renderStemKnowledgePoint(subjectId, lesson, point, lessonIndex, pointIndex))
+        .map((point) => renderStemKnowledgePoint(point))
         .join("");
       const support = renderStemLessonSupport(subjectId, lesson);
       return `
@@ -1530,30 +1530,18 @@ function renderStemKnowledgeSection(subjectId, chapter) {
     <section class="stem-knowledge-section">
       <div class="stem-section-head">
         <strong>本章知识点</strong>
-        <p>定义、公式、实验和易错点放在这里。</p>
+        <p>知识点和常考内容先列清楚，下面直接做题。</p>
       </div>
       ${lessonBlocks}
     </section>
   `;
 }
 
-function renderStemKnowledgePoint(subjectId, lesson, point, lessonIndex, pointIndex) {
-  const explanation = explainStemPoint(subjectId, lesson, point, lessonIndex, pointIndex);
-  const examCue = stemExamCue(subjectId, point, lesson);
-  const trap = lesson.commonMistakes?.[0] ?? stemDefaultTrap(subjectId);
-
+function renderStemKnowledgePoint(point) {
   return `
     <article class="stem-point-card">
+      <span class="stem-point-label">考点</span>
       <strong>${point}</strong>
-      <p>${explanation}</p>
-      <div>
-        <span>考法</span>
-        <em>${examCue}</em>
-      </div>
-      <div>
-        <span>易错</span>
-        <em>${trap}</em>
-      </div>
     </article>
   `;
 }
@@ -1994,26 +1982,6 @@ function buildStemComprehensiveQuestion(subjectId, chapter) {
     trap: stemDefaultTrap(subjectId),
     sourceNote: "原创变式 · 真题考法参考",
   };
-}
-
-function explainStemPoint(subjectId, lesson, point, lessonIndex, pointIndex) {
-  const formula = lesson.formulas?.[pointIndex % lesson.formulas.length];
-  const experiment = lesson.experiment;
-  const safety = lesson.safety;
-  const templates = {
-    math: `把它当成解题入口：先看题目给了哪些条件，再判断能不能用对应定义、图形关系或公式${formula ? `（如 ${formula}）` : ""}。`,
-    physics: `把它放进具体情境：先画图或标变量，再检查方向、单位和适用条件${formula ? `，常用关系是 ${formula}` : ""}。`,
-    chemistry: `用三层理解：宏观现象是什么，微观或组成变化是什么，能不能写成符号或实验依据${experiment ? `；本课实验线索是：${experiment}` : ""}${safety ? `；注意：${safety}` : ""}。`,
-  };
-  return templates[subjectId] ?? templates.math;
-}
-
-function stemExamCue(subjectId, point, lesson) {
-  return {
-    math: `常考“给条件选方法、列式、计算和检验”，尤其要写出 ${point} 的适用条件。`,
-    physics: `常考“图示/实验 + 公式/结论”，要能说明 ${point} 中每个量或现象代表什么。`,
-    chemistry: `常考“现象判断 + 证据表达”，要能用 ${point} 解释变化、性质或实验操作。`,
-  }[subjectId] ?? `围绕 ${point} 说明条件、依据和结论。`;
 }
 
 function stemOpenAnswer(subjectId) {

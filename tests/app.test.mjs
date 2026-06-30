@@ -251,6 +251,21 @@ test("math physics and chemistry chapters render knowledge first and practice by
   assert.doesNotMatch(stemBlock, /renderChapterSupportDetails/);
 });
 
+test("STEM knowledge list stays concise without repeated explanation templates", () => {
+  const knowledgePointBlock = appSource.match(/function renderStemKnowledgePoint\([\s\S]*?\nfunction renderStemLessonSupport/)?.[0] ?? "";
+  const knowledgeSectionBlock = appSource.match(/function renderStemKnowledgeSection\(subjectId, chapter\) \{[\s\S]*?\nfunction renderStemKnowledgePoint/)?.[0] ?? "";
+
+  assert.match(knowledgeSectionBlock, /知识点和常考内容先列清楚/);
+  assert.match(knowledgePointBlock, /stem-point-label/);
+  assert.match(knowledgePointBlock, /考点/);
+  assert.doesNotMatch(knowledgePointBlock, /explainStemPoint/);
+  assert.doesNotMatch(knowledgePointBlock, /stemExamCue/);
+  assert.doesNotMatch(knowledgePointBlock, /stemDefaultTrap/);
+  assert.doesNotMatch(knowledgePointBlock, /<p>\$\{explanation\}<\/p>/);
+  assert.doesNotMatch(knowledgePointBlock, /<span>考法<\/span>/);
+  assert.doesNotMatch(knowledgePointBlock, /<span>易错<\/span>/);
+});
+
 test("math stem practice bank avoids fake study-prompt questions", () => {
   const mathBankBlock = appSource.match(/function buildMathStemPracticeGroups\(chapter\) \{[\s\S]*?\nfunction buildDefaultStemPracticeGroups/)?.[0] ?? "";
 
