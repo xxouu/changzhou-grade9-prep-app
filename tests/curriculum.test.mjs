@@ -156,7 +156,7 @@ test("math practice questions look like real grade-nine math tasks instead of st
 test("chemistry practice questions use concrete experiment contexts instead of meta prompts", () => {
   const bannedPrompt = /最可靠|相关问题|哪一种判断|判断“[^”]+”相关|只凭生活经验/;
   const chemistryTaskPattern =
-    /蜡烛|氧气|氮气|红磷|水面|木条|铁丝|高锰酸钾|过氧化氢|二氧化锰|电解水|过滤|肥皂水|分子|原子|离子|元素|化学式|H₂O|质量守恒|方程式|CO|Fe₂O₃|铁钉|生锈|新物质|物理性质|化学性质|反应前|反应中|反应后|二氧化碳|石灰水|氨气|氢气|镁|锌|稀盐酸|不锈钢|合金/;
+    /蜡烛|氧气|氮气|红磷|水面|木条|铁丝|高锰酸钾|过氧化氢|二氧化锰|电解水|过滤|肥皂水|分子|原子|离子|元素|化学式|H₂O|质量守恒|方程式|CO|Fe₂O₃|铁钉|生锈|新物质|物理性质|化学性质|反应前|反应中|反应后|二氧化碳|石灰水|氨气|氢气|镁|锌|稀盐酸|不锈钢|合金|铜片|氧化铜|试管|加热/;
   const questions = curriculum.chemistry.chapters.flatMap((chapter) =>
     chapter.lessons.flatMap((lesson) => [
       ...(lesson.practiceSet ?? []),
@@ -175,6 +175,55 @@ test("chemistry practice questions use concrete experiment contexts instead of m
     true,
     "chemistry questions should contain concrete substances, observations, operations or symbols",
   );
+});
+
+test("STEM practice questions use explicit source types and real question forms", () => {
+  const banned = /第一步应先确认什么|最可靠的依据|相关问题时|基础题前|预习“|学习“|先写依据|再选答案|最先应该完成哪一步/;
+  const allowedTypes = new Set(["authorized-original", "original-variant"]);
+
+  for (const subjectId of ["math", "physics", "chemistry"]) {
+    const questions = curriculum[subjectId].chapters.flatMap((chapter) =>
+      chapter.lessons.flatMap((lesson) => lesson.practiceSet ?? []),
+    );
+
+    assert.ok(questions.length >= 40, `${subjectId} needs enough lesson-level practice`);
+    assert.ok(
+      questions.every((question) => allowedTypes.has(question.sourceType)),
+      `${subjectId} questions need sourceType`,
+    );
+    assert.ok(
+      questions.every((question) => ["choice", "blank", "calculation", "experiment", "comprehensive"].includes(question.type)),
+      `${subjectId} questions need a real question type`,
+    );
+    assert.ok(
+      questions.every((question) => !banned.test([question.question, question.answer, question.explanation, ...(question.choices ?? [])].join(" "))),
+      `${subjectId} questions should not use meta learning prompts`,
+    );
+    assert.ok(
+      questions.every((question) => question.steps?.length >= 2 || question.explanation?.length >= 20),
+      `${subjectId} questions need concrete steps or explanations`,
+    );
+  }
+});
+
+test("priority STEM chapters include choice blank calculation or experiment practice", () => {
+  const priorityIds = new Set([
+    "math-chapter-1",
+    "math-chapter-5",
+    "phy-chapter-11",
+    "phy-chapter-14",
+    "chem-chapter-1",
+    "chem-chapter-2",
+  ]);
+
+  for (const subjectId of ["math", "physics", "chemistry"]) {
+    for (const chapter of curriculum[subjectId].chapters.filter((item) => priorityIds.has(item.id))) {
+      const types = new Set(chapter.lessons.flatMap((lesson) => (lesson.practiceSet ?? []).map((question) => question.type)));
+      assert.ok(types.has("choice"), `${chapter.title} needs choice questions`);
+      assert.ok(types.has("blank") || types.has("calculation"), `${chapter.title} needs blank or calculation questions`);
+      assert.ok(types.has("comprehensive") || types.has("experiment"), `${chapter.title} needs comprehensive or experiment questions`);
+    }
+  }
 });
 
 test("every chapter provides an efficient knowledge map for preview learning", () => {
@@ -257,7 +306,7 @@ test("subject chapter index summarizes learning load and review material", () =>
   assert.ok(englishIndex.every((chapter) => chapter.wordCount >= 45));
 
   const chineseIndex = getSubjectChapterIndex(curriculum, "chinese");
-  assert.ok(chineseIndex.every((chapter) => chapter.dictationWordCount >= chapter.lessonCount * 4));
+  assert.ok(chineseIndex.every((chapter) => chapter.dictationWordCount >= chapter.lessonCount * 8));
 });
 
 test("curriculum coverage summary exposes subject coverage and review gaps", () => {
@@ -355,6 +404,31 @@ test("chinese lessons include dictation words and learning focus without full te
   assert.ok(lessons.every((lesson) => lesson.readingQuestions?.length >= 2));
   assert.ok(lessons.every((lesson) => lesson.writingTask));
   assert.ok(lessons.every((lesson) => !lesson.fullText));
+});
+
+test("Chinese lessons provide teacher-grade prep packages and controlled text sources", () => {
+  const modernFullTextLimit = 240;
+
+  for (const chapter of curriculum.chinese.chapters) {
+    for (const lesson of chapter.lessons) {
+      assert.ok(lesson.author || lesson.source, `${lesson.title} needs author or source`);
+      assert.ok(lesson.genre, `${lesson.title} needs a genre`);
+      assert.ok(lesson.intro && lesson.intro.length >= 60, `${lesson.title} needs a concrete intro`);
+      assert.ok(lesson.dictationWords?.length >= 8, `${lesson.title} needs at least 8 dictation words or phrases`);
+      assert.ok(lesson.readingFocus?.length >= 3, `${lesson.title} needs reading focus points`);
+      assert.ok(lesson.readingQuestions?.length >= 3, `${lesson.title} needs reading questions`);
+      assert.ok(lesson.writingTask, `${lesson.title} needs a writing transfer task`);
+      assert.ok(lesson.textSource?.type, `${lesson.title} needs text source metadata`);
+
+      if (lesson.textSource.type === "public-domain") {
+        assert.ok(lesson.originalText?.length >= 20, `${lesson.title} public-domain text should be available`);
+      }
+
+      if (lesson.textSource.type === "licensed-required") {
+        assert.ok(!lesson.originalText || lesson.originalText.length <= modernFullTextLimit, `${lesson.title} should not embed unlicensed modern full text`);
+      }
+    }
+  }
 });
 
 test("chinese lessons include literacy practice for dictation, reading evidence and writing transfer", () => {

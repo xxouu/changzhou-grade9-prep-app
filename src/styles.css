@@ -3566,6 +3566,112 @@ body[data-view="home"] .version-card {
   gap: 8px;
 }
 
+.chinese-lesson-package {
+  display: grid;
+  gap: 12px;
+}
+
+.chinese-lesson-package section,
+.chinese-original-text {
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid #edf2ea;
+  background: transparent;
+}
+
+.chinese-lesson-package section:last-child {
+  border-bottom: 0;
+}
+
+.chinese-lesson-intro {
+  display: grid;
+  gap: 8px;
+}
+
+.chinese-lesson-intro div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chinese-lesson-intro strong,
+.chinese-lesson-package section > strong {
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.chinese-lesson-intro span {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #eef6ee;
+  color: #2f5a46;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.chinese-lesson-intro p,
+.writing-transfer-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.chinese-original-text summary {
+  width: fit-content;
+  cursor: pointer;
+  color: #0f766e;
+  font-weight: 800;
+}
+
+.chinese-original-text pre {
+  margin: 10px 0 0;
+  padding: 12px;
+  max-height: 420px;
+  overflow: auto;
+  border-radius: 8px;
+  background: #fbf7ee;
+  color: #334155;
+  white-space: pre-wrap;
+  line-height: 1.85;
+  font-family: inherit;
+}
+
+.chinese-original-text p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.dictation-word-table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.dictation-word-table span {
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: #f3f7f1;
+  color: #24372d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.reading-focus-list,
+.reading-question-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.reading-question-list strong {
+  color: #0f766e;
+}
+
 .lesson-learning-loop {
   display: grid;
   grid-column: 1 / -1;

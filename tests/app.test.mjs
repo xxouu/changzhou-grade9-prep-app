@@ -299,6 +299,28 @@ test("lesson extras keep only core learning blocks in the default lesson body", 
   assert.match(pathBlock, /错因复盘/);
 });
 
+test("Chinese lesson body renders intro, text disclosure, word table and focused practice", () => {
+  const renderBlock = appSource.match(/function renderChineseLessonBody\([\s\S]*?\nfunction renderLessonExtras/)?.[0] ?? "";
+  const chapterBlock = appSource.match(/function renderChapterCard\(subjectId, chapter\) \{[\s\S]*?\nfunction renderStemChapterCard/)?.[0] ?? "";
+
+  assert.match(renderBlock, /chinese-lesson-intro/);
+  assert.match(renderBlock, /chinese-original-text/);
+  assert.match(renderBlock, /展开原文/);
+  assert.match(renderBlock, /dictation-word-table/);
+  assert.match(renderBlock, /reading-focus-list/);
+  assert.match(renderBlock, /writing-transfer-card/);
+  assert.match(chapterBlock, /renderChineseLessonBody/);
+});
+
+test("default lesson body no longer renders repeated learning-loop dashboards", () => {
+  const chapterBlock = appSource.match(/function renderChapterCard\(subjectId, chapter\) \{[\s\S]*?\nfunction renderStemChapterCard/)?.[0] ?? "";
+
+  assert.doesNotMatch(chapterBlock, /renderLessonLearningLoop/);
+  assert.doesNotMatch(chapterBlock, /renderLessonPathOverview/);
+  assert.doesNotMatch(chapterBlock, /renderEntryDiagnostic/);
+  assert.doesNotMatch(chapterBlock, /学习闭环总览/);
+});
+
 test("lesson next-step advice updates after diagnostic, practice and self-check actions", () => {
   const renderBlock = appSource.match(/function renderLessonNextStepAdvice\(lesson\) \{[\s\S]*?\n\}/)?.[0] ?? "";
   const diagnosticHandler = appSource.match(/function handleEntryDiagnosticAnswer\(button\) \{[\s\S]*?\n\}/)?.[0] ?? "";

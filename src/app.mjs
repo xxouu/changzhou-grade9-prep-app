@@ -4,7 +4,7 @@ import {
   getReviewCoverageSummary,
   getSubjectChapterIndex,
   subjectOrder,
-} from "./content.mjs?v=20260628-depth122";
+} from "./content.mjs?v=20260628-depth123";
 import {
   STORAGE_KEY,
   answerGrammarQuiz,
@@ -69,7 +69,7 @@ import {
   updateSelfCheckProgress,
   updateStudyOutputProgress,
   updateWritingMissionProgress,
-} from "./progress.mjs?v=20260628-depth122";
+} from "./progress.mjs?v=20260628-depth123";
 
 const state = {
   view: "home",
@@ -1370,6 +1370,16 @@ function renderChapterCard(subjectId, chapter) {
         ? `<div class="dictation-line"><strong>默写词语</strong><span>${lesson.dictationWords.join("、")}</span></div>`
         : "";
       const extras = renderLessonExtras(lesson);
+      const lessonBody = subjectId === "chinese"
+        ? renderChineseLessonBody(lesson)
+        : `
+            ${dictation}
+            <div class="lesson-main-points">
+              <strong>学习要点</strong>
+              <ul>${keyPoints}</ul>
+            </div>
+            ${extras}
+          `;
       const summary = renderLessonRowSummary(lesson);
       return `
         <details class="lesson-row">
@@ -1379,12 +1389,7 @@ function renderChapterCard(subjectId, chapter) {
             ${summary}
           </summary>
           <div class="lesson-body">
-            ${dictation}
-            <div class="lesson-main-points">
-              <strong>学习要点</strong>
-              <ul>${keyPoints}</ul>
-            </div>
-            ${extras}
+            ${lessonBody}
           </div>
         </details>
       `;
@@ -1421,6 +1426,54 @@ function renderChapterCard(subjectId, chapter) {
       ${lessons ? `<div class="lesson-list">${lessons}</div>` : ""}
       ${renderChapterSupportDetails(supportBlocks)}
     </article>
+  `;
+}
+
+function renderChineseLessonBody(lesson) {
+  const words = (lesson.dictationWords ?? [])
+    .map((word) => `<span>${typeof word === "string" ? word : word.word}</span>`)
+    .join("");
+  const focus = (lesson.readingFocus ?? lesson.keyPoints ?? [])
+    .map((item) => `<li>${item}</li>`)
+    .join("");
+  const questions = (lesson.readingQuestions ?? [])
+    .map((question, index) => `<li><strong>${index + 1}.</strong> ${question}</li>`)
+    .join("");
+  const originalText = lesson.originalText
+    ? `<pre>${lesson.originalText}</pre>`
+    : `<p>${lesson.textSource?.note ?? "暂不展示全文，可使用课本阅读原文。"}</p>`;
+  const sourceLabel = lesson.textSource?.type === "public-domain" ? "公版原文" : "课本原文";
+
+  return `
+    <div class="chinese-lesson-package">
+      <section class="chinese-lesson-intro">
+        <div>
+          <strong>${lesson.genre ?? "课文"} · ${lesson.author ?? lesson.source ?? "课文导读"}</strong>
+          <span>${sourceLabel}</span>
+        </div>
+        <p>${lesson.intro ?? "先读标题和导读，再回到课本完成原文阅读。"}</p>
+      </section>
+      <details class="chinese-original-text">
+        <summary>展开原文</summary>
+        ${originalText}
+      </details>
+      <section class="chinese-dictation-block">
+        <strong>必会词语</strong>
+        <div class="dictation-word-table">${words}</div>
+      </section>
+      <section>
+        <strong>阅读要点</strong>
+        <ul class="reading-focus-list">${focus}</ul>
+      </section>
+      <section>
+        <strong>阅读理解</strong>
+        <ol class="reading-question-list">${questions}</ol>
+      </section>
+      <section class="writing-transfer-card">
+        <strong>写作迁移</strong>
+        <p>${lesson.writingTask ?? "提炼本课表达方法，换成自己的材料写一段话。"}</p>
+      </section>
+    </div>
   `;
 }
 
@@ -1477,7 +1530,7 @@ function renderStemKnowledgeSection(subjectId, chapter) {
     <section class="stem-knowledge-section">
       <div class="stem-section-head">
         <strong>本章知识点</strong>
-        <p>先看懂定义、条件和易错点，再做下面的题。</p>
+        <p>定义、公式、实验和易错点放在这里。</p>
       </div>
       ${lessonBlocks}
     </section>
