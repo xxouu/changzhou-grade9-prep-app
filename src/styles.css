@@ -7104,18 +7104,43 @@ body[data-view="home"] .version-card {
 
   .grammar-note {
     padding: 12px 0;
+    min-width: 0;
   }
 
   .grammar-note-head {
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: start;
   }
 
   .grammar-note-head strong {
+    min-width: 0;
     font-size: 16px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .grammar-note-head button {
+    justify-self: end;
+    min-height: 28px;
+    padding: 3px 7px;
   }
 
   .grammar-mini-quiz {
-    padding: 10px;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+
+  .grammar-answer {
+    background: transparent;
+  }
+
+  .grammar-answer summary {
+    display: inline-flex;
+    width: fit-content;
+    padding: 3px 0;
   }
 
   .stem-study-layout {

@@ -195,6 +195,16 @@ test("mobile English word rows center the word and speaker control", () => {
   assert.match(mobileBlock, /\.english-word-row \.speak-button\s*\{[\s\S]*?align-self:\s*center/);
 });
 
+test("mobile English grammar cards keep title and mastery action from crowding", () => {
+  const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
+
+  assert.match(mobileBlock, /\.grammar-note-head\s*\{[\s\S]*?display:\s*grid/);
+  assert.match(mobileBlock, /\.grammar-note-head\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\) auto/);
+  assert.match(mobileBlock, /\.grammar-note-head strong\s*\{[\s\S]*?overflow-wrap:\s*anywhere/);
+  assert.match(mobileBlock, /\.grammar-note-head button\s*\{[\s\S]*?justify-self:\s*end/);
+  assert.match(mobileBlock, /\.grammar-mini-quiz\s*\{[\s\S]*?padding:\s*8px 10px/);
+});
+
 test("today panel is compact and folds diagnostics behind details", () => {
   const adaptiveBlock = appSource.match(/function renderAdaptiveSession\(\) \{[\s\S]*?\nfunction renderAllSubjectLearningLoop/)?.[0] ?? "";
   const todayBlock = appSource.match(/function renderTodayPlan\(\) \{[\s\S]*?\nfunction renderReviewQueue/)?.[0] ?? "";
