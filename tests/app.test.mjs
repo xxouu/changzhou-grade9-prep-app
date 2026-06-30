@@ -190,9 +190,20 @@ test("mobile English word rows center the word and speaker control", () => {
   assert.match(mobileBlock, /\.english-word-grid\s*\{[\s\S]*?gap:\s*8px/);
   assert.match(mobileBlock, /\.english-word-row\s*\{[\s\S]*?align-items:\s*center/);
   assert.match(mobileBlock, /\.english-word-row\s*\{[\s\S]*?min-height:\s*56px/);
-  assert.match(mobileBlock, /\.english-word-row\s*\{[\s\S]*?padding:\s*10px 12px/);
+  assert.match(mobileBlock, /\.english-word-row\s*\{[\s\S]*?padding:\s*12px 14px/);
   assert.match(mobileBlock, /\.english-word-row > span\s*\{[\s\S]*?align-content:\s*center/);
   assert.match(mobileBlock, /\.english-word-row \.speak-button\s*\{[\s\S]*?align-self:\s*center/);
+});
+
+test("mobile English phrase rows keep horizontal breathing room", () => {
+  const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
+
+  assert.match(mobileBlock, /\.phrase-row\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
+  assert.match(mobileBlock, /\.phrase-row span\s*\{[\s\S]*?min-height:\s*56px/);
+  assert.match(mobileBlock, /\.phrase-row span\s*\{[\s\S]*?padding:\s*12px 14px/);
+  assert.match(mobileBlock, /\.phrase-row span\s*\{[\s\S]*?border:\s*1px solid #e3eadf/);
+  assert.match(mobileBlock, /\.phrase-row \.speak-button\s*\{[\s\S]*?align-self:\s*center/);
+  assert.match(mobileBlock, /\.phrase-row \.speak-button\s*\{[\s\S]*?justify-self:\s*end/);
 });
 
 test("mobile English grammar cards keep title and mastery action from crowding", () => {

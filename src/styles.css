@@ -7051,9 +7051,10 @@ body[data-view="home"] .version-card {
 
   .english-word-row {
     align-items: center;
-    gap: 10px;
+    box-sizing: border-box;
+    gap: 12px;
     min-height: 56px;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border: 1px solid #e3eadf;
     border-radius: 8px;
     background: #fbfdf9;
@@ -7079,8 +7080,20 @@ body[data-view="home"] .version-card {
   }
 
   .phrase-row span {
-    padding: 8px 0;
-    border-bottom: 1px solid #eef3ed;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 56px;
+    padding: 12px 14px;
+    border: 1px solid #e3eadf;
+    border-radius: 8px;
+    background: #fbfdf9;
+  }
+
+  .phrase-row .speak-button {
+    align-self: center;
+    justify-self: end;
+    width: 34px;
+    min-height: 34px;
   }
 
   .sentence-pattern-list {
