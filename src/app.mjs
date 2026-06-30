@@ -4,7 +4,7 @@ import {
   getReviewCoverageSummary,
   getSubjectChapterIndex,
   subjectOrder,
-} from "./content.mjs?v=20260628-depth128";
+} from "./content.mjs?v=20260628-depth129";
 import {
   STORAGE_KEY,
   answerGrammarQuiz,
@@ -69,7 +69,7 @@ import {
   updateSelfCheckProgress,
   updateStudyOutputProgress,
   updateWritingMissionProgress,
-} from "./progress.mjs?v=20260628-depth128";
+} from "./progress.mjs?v=20260628-depth129";
 
 const state = {
   view: "home",
@@ -533,7 +533,7 @@ function renderAll() {
   renderWritingMission();
   clearSubjectUtilityPanels();
   renderActivityLibrary();
-  els.modeBadge.textContent = state.mode === "child" ? "孩子视图" : "校对视图";
+  els.modeBadge.textContent = state.mode === "child" ? "20-30 分钟" : "校对视图";
 }
 
 function clearSubjectUtilityPanels() {
@@ -612,7 +612,6 @@ function renderAdaptiveSession() {
   const session = getAdaptivePreviewSession(curriculum, state.progress);
   const allSubjectLoop = getAllSubjectLearningLoopSummary(curriculum, state.progress);
   const focus = session.focusTags.length ? session.focusTags.join("、") : "均衡预习";
-  const firstStep = session.steps[0];
   const steps = session.steps
     .map(
       (step, index) => `
@@ -630,16 +629,8 @@ function renderAdaptiveSession() {
     .join("");
 
   els.adaptiveSession.innerHTML = `
-    <section class="home-focus-strip">
-      <div>
-        <span>今日重点</span>
-        <strong>${firstStep ? `${firstStep.subjectName}：${firstStep.title}` : session.title}</strong>
-        <p>${session.totalMinutes} 分钟 · ${focus}</p>
-      </div>
-      <em>${session.steps.length} 步</em>
-    </section>
     <details class="adaptive-details">
-      <summary>查看完整路线和全科进度</summary>
+      <summary>查看完整预习路线</summary>
       ${renderAllSubjectLearningLoop(allSubjectLoop)}
       <section class="adaptive-session-card">
         <div class="adaptive-session-head">
@@ -692,8 +683,8 @@ function renderAllSubjectLearningLoop(summary) {
 
 function renderTodayPlan() {
   const plan = getTodayPlan(curriculum, state.progress, state.mode);
-  const visiblePlan = plan.slice(0, 2);
-  const extraPlan = plan.slice(2);
+  const visiblePlan = plan.slice(0, 3);
+  const extraPlan = plan.slice(3);
   const renderTask = (activity) => {
     const done = state.progress.completedActivities.includes(activity.id);
     return `
@@ -715,7 +706,7 @@ function renderTodayPlan() {
     (extraPlan.length
       ? `
         <details class="more-tasks">
-          <summary>还有 ${extraPlan.length} 项备用任务</summary>
+          <summary>更多可选任务（${extraPlan.length} 项）</summary>
           <div>${extraTasks}</div>
         </details>
       `

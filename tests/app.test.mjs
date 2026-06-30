@@ -234,16 +234,22 @@ test("mobile non-English subject sections keep readable side gutters", () => {
   assert.match(mobileBlock, /\.stem-point-card,\s*[\s\S]*?\.stem-practice-card\s*\{[\s\S]*?padding:\s*10px/);
 });
 
-test("today panel is compact and folds diagnostics behind details", () => {
+test("home dashboard focuses on a clear daily prep plan", () => {
   const adaptiveBlock = appSource.match(/function renderAdaptiveSession\(\) \{[\s\S]*?\nfunction renderAllSubjectLearningLoop/)?.[0] ?? "";
   const todayBlock = appSource.match(/function renderTodayPlan\(\) \{[\s\S]*?\nfunction renderReviewQueue/)?.[0] ?? "";
 
-  assert.match(htmlSource, /<h3>今天先做这几项<\/h3>/);
-  assert.match(adaptiveBlock, /home-focus-strip/);
+  assert.match(htmlSource, /<h2>今日预习<\/h2>/);
+  assert.match(htmlSource, /<h3>今日预习清单<\/h3>/);
+  assert.doesNotMatch(htmlSource, /先英语建立手感/);
+  assert.doesNotMatch(htmlSource, /进度只保存在当前浏览器/);
+  assert.doesNotMatch(htmlSource, /今天先做这几项/);
+  assert.doesNotMatch(adaptiveBlock, /home-focus-strip/);
   assert.match(adaptiveBlock, /details class="adaptive-details"/);
-  assert.match(todayBlock, /visiblePlan/);
-  assert.match(todayBlock, /extraPlan/);
+  assert.match(adaptiveBlock, /查看完整预习路线/);
+  assert.match(todayBlock, /plan\.slice\(0,\s*3\)/);
+  assert.match(todayBlock, /plan\.slice\(3\)/);
   assert.match(todayBlock, /details class="more-tasks"/);
+  assert.match(todayBlock, /更多可选任务/);
 }
 );
 

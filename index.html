@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>常州初三预习助手</title>
-    <link rel="stylesheet" href="./src/styles.css?v=20260628-depth128" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260628-depth129" />
   </head>
   <body>
     <div class="app-shell">
@@ -46,11 +46,10 @@
         <section class="hero-panel" aria-label="今日学习概览">
           <div>
             <p class="eyebrow">今日 20-30 分钟</p>
-            <h2>先英语建立手感，再用数学找薄弱点。</h2>
-            <p class="hero-copy">内容已按孩子自主预习路径编排，进度只保存在当前浏览器。</p>
+            <h2>今日预习</h2>
             <div class="hero-actions">
-              <button id="continueButton" class="primary-button" type="button">继续今日任务</button>
-              <button id="resetButton" class="ghost-button" type="button">重置演示进度</button>
+              <button id="continueButton" class="primary-button" type="button">开始今日预习</button>
+              <button id="resetButton" class="ghost-button" type="button">重置进度</button>
             </div>
           </div>
           <div class="study-visual" aria-hidden="true">
@@ -69,9 +68,9 @@
           </div>
         </section>
 
-        <section class="metrics-grid" aria-label="学习指标">
+        <section class="metrics-grid" aria-label="学习状态">
           <article>
-            <span>连续学习</span>
+            <span>连续</span>
             <strong id="streakValue">0 天</strong>
           </article>
           <article>
@@ -88,13 +87,13 @@
           <div class="panel today-panel">
             <div class="panel-heading">
               <div>
-                <p class="eyebrow">今日任务</p>
-                <h3>今天先做这几项</h3>
+                <p class="eyebrow">今日清单</p>
+                <h3>今日预习清单</h3>
               </div>
-              <span id="modeBadge" class="badge">孩子视图</span>
+              <span id="modeBadge" class="badge">20-30 分钟</span>
             </div>
-            <div id="adaptiveSession" class="adaptive-session" aria-label="今日智能预习路线"></div>
             <div id="todayPlan" class="task-list"></div>
+            <div id="adaptiveSession" class="adaptive-session" aria-label="完整预习路线"></div>
           </div>
 
           <div class="panel review-panel">
@@ -259,6 +258,6 @@
       </main>
     </div>
 
-    <script type="module" src="./src/app.mjs?v=20260628-depth128"></script>
+    <script type="module" src="./src/app.mjs?v=20260628-depth129"></script>
   </body>
 </html>
