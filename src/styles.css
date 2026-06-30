@@ -7012,10 +7012,15 @@ body[data-view="home"] .version-card {
 
   .english-study-section summary {
     min-height: 34px;
+    padding: 0 14px;
   }
 
   .english-study-section summary > span {
     gap: 7px;
+  }
+
+  .english-section-body {
+    padding: 10px 14px 14px;
   }
 
   .section-toggle {
@@ -7097,6 +7102,7 @@ body[data-view="home"] .version-card {
   }
 
   .sentence-pattern-list {
+    margin: 0;
     font-size: 13px;
     line-height: 1.6;
   }

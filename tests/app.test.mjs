@@ -206,6 +206,15 @@ test("mobile English phrase rows keep horizontal breathing room", () => {
   assert.match(mobileBlock, /\.phrase-row \.speak-button\s*\{[\s\S]*?justify-self:\s*end/);
 });
 
+test("mobile English section headers and content keep side gutters", () => {
+  const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
+
+  assert.match(mobileBlock, /\.english-study-section summary\s*\{[\s\S]*?padding:\s*0 14px/);
+  assert.match(mobileBlock, /\.english-section-body\s*\{[\s\S]*?padding:\s*10px 14px 14px/);
+  assert.match(mobileBlock, /\.sentence-pattern-list\s*\{[\s\S]*?margin:\s*0/);
+  assert.match(mobileBlock, /\.grammar-note\s*\{[\s\S]*?padding:\s*12px 0/);
+});
+
 test("mobile English grammar cards keep title and mastery action from crowding", () => {
   const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
 
