@@ -4880,7 +4880,7 @@ function buildQuickCheck(subjectId, chapter, lessonItem) {
     },
     physics: {
       question: `学习“${lessonItem.title}”时，怎样避免常见错误？`,
-      choices: [`先画图或标变量，再判断：${firstPoint}`, `记住易错点：${mistake}`, "只背一个结论，不看条件"],
+      choices: [`先画图或标变量，再判断：${firstPoint}`, `记住易错点：${mistake}`, "直接套结论，忽略题设条件"],
       answer: `先画图或标变量，再判断：${firstPoint}`,
       explanation: "物理预习要把现象、图示、变量和条件连起来，不能只记一句结论。",
     },

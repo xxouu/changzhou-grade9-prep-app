@@ -5,6 +5,7 @@ import test from "node:test";
 const appSource = readFileSync(new URL("../src/app.mjs", import.meta.url), "utf8");
 const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
 const htmlSource = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const contentSource = readFileSync(new URL("../src/content.mjs", import.meta.url), "utf8");
 
 test("home quick practice wrong feedback renders the repair panel", () => {
   const quickPracticeBlock = appSource.match(/function renderQuickPractice\(\) \{[\s\S]*?\n\}/)?.[0] ?? "";
@@ -331,6 +332,13 @@ test("chemistry stem practice bank uses concrete experiment contexts instead of 
   assert.match(stemRouterBlock, /buildChemistryStemPracticeGroups/);
   assert.match(chemistryBankBlock, /红磷|带火星木条|电解水|H₂O|质量守恒|铁钉|Fe₂O₃/);
   assert.doesNotMatch(chemistryBankBlock, /最可靠|相关问题|哪一种判断|第一步|确认什么/);
+});
+
+test("physics quick-check distractors use clear condition-based wording", () => {
+  const quickCheckBlock = contentSource.match(/function buildQuickCheck\(subjectId, chapter, lessonItem\) \{[\s\S]*?\nfunction buildEntryDiagnostic/)?.[0] ?? "";
+
+  assert.doesNotMatch(quickCheckBlock, /只背一个结论，不看条件/);
+  assert.match(quickCheckBlock, /直接套结论，忽略题设条件/);
 });
 
 test("math subject rendering does not reference undefined title helpers", () => {
