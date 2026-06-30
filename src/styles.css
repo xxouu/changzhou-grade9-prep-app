@@ -6954,11 +6954,30 @@ body[data-view="home"] .version-card {
 
   .english-word-grid {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 8px;
   }
 
   .english-word-row {
-    min-height: 42px;
+    align-items: center;
+    gap: 10px;
+    min-height: 56px;
+    padding: 10px 12px;
+    border: 1px solid #e3eadf;
+    border-radius: 8px;
+    background: #fbfdf9;
+  }
+
+  .english-word-row > span {
+    display: grid;
+    align-content: center;
+    gap: 3px;
+    min-height: 34px;
+  }
+
+  .english-word-row .speak-button {
+    align-self: center;
+    width: 34px;
+    min-height: 34px;
   }
 
   .phrase-row {

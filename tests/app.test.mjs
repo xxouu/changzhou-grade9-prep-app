@@ -184,6 +184,17 @@ test("mobile stylesheet uses compact top navigation and single-column content", 
   assert.match(mobileBlock, /\.stem-study-layout\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
 });
 
+test("mobile English word rows center the word and speaker control", () => {
+  const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
+
+  assert.match(mobileBlock, /\.english-word-grid\s*\{[\s\S]*?gap:\s*8px/);
+  assert.match(mobileBlock, /\.english-word-row\s*\{[\s\S]*?align-items:\s*center/);
+  assert.match(mobileBlock, /\.english-word-row\s*\{[\s\S]*?min-height:\s*56px/);
+  assert.match(mobileBlock, /\.english-word-row\s*\{[\s\S]*?padding:\s*10px 12px/);
+  assert.match(mobileBlock, /\.english-word-row > span\s*\{[\s\S]*?align-content:\s*center/);
+  assert.match(mobileBlock, /\.english-word-row \.speak-button\s*\{[\s\S]*?align-self:\s*center/);
+});
+
 test("today panel is compact and folds diagnostics behind details", () => {
   const adaptiveBlock = appSource.match(/function renderAdaptiveSession\(\) \{[\s\S]*?\nfunction renderAllSubjectLearningLoop/)?.[0] ?? "";
   const todayBlock = appSource.match(/function renderTodayPlan\(\) \{[\s\S]*?\nfunction renderReviewQueue/)?.[0] ?? "";
