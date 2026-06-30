@@ -1352,7 +1352,6 @@ function renderChapterCard(subjectId, chapter) {
 
   const showLessonRows = subjectId !== "english";
   const lessonCount = showLessonRows ? chapter.lessons.length : chapter.grammarNotes?.length ?? chapter.lessons.length;
-  const knowledgeChecklist = getChapterKnowledgeChecklist(curriculum, subjectId, chapter.id, state.progress);
   const lessons = showLessonRows
     ? chapter.lessons
     .map((lesson, index) => {
@@ -1388,15 +1387,6 @@ function renderChapterCard(subjectId, chapter) {
     .join("")
     : "";
   const englishExtras = subjectId === "english" ? renderEnglishExtras(chapter) : "";
-  const knowledgeMap = renderKnowledgeMap(chapter.knowledgeMap);
-  const supportBlocks = [
-    knowledgeMap,
-    renderChapterMasteryChecklist(chapter),
-    renderChapterKnowledgeChecklist(knowledgeChecklist),
-    renderChapterTieredPractice(subjectId, chapter),
-  ]
-    .filter(Boolean)
-    .join("");
 
   return `
     <article class="library-card chapter-card">
@@ -1415,7 +1405,6 @@ function renderChapterCard(subjectId, chapter) {
       </div>
       ${englishExtras}
       ${lessons ? `<div class="lesson-list">${lessons}</div>` : ""}
-      ${renderChapterSupportDetails(supportBlocks)}
     </article>
   `;
 }
@@ -1434,6 +1423,7 @@ function renderChineseLessonBody(lesson) {
     ? `<pre>${lesson.originalText}</pre>`
     : `<p>${lesson.textSource?.note ?? "暂不展示全文，可使用课本阅读原文。"}</p>`;
   const sourceLabel = lesson.textSource?.type === "public-domain" ? "公版原文" : "课本原文";
+  const classicalSupport = renderClassicalReadingSupport(lesson.classicalSupport);
 
   return `
     <div class="chinese-lesson-package">
@@ -1448,6 +1438,7 @@ function renderChineseLessonBody(lesson) {
         <summary>展开原文</summary>
         ${originalText}
       </details>
+      ${classicalSupport}
       <section class="chinese-dictation-block">
         <strong>必会词语</strong>
         <div class="dictation-word-table">${words}</div>
@@ -1466,6 +1457,73 @@ function renderChineseLessonBody(lesson) {
       </section>
     </div>
   `;
+}
+
+function renderClassicalReadingSupport(support) {
+  if (!support) {
+    return "";
+  }
+
+  const segmented = support.segmentedText
+    ? `
+      <section class="classical-reading-panel">
+        <strong>断句朗读</strong>
+        <pre>${annotateClassicalText(support.segmentedText, support.wordNotes ?? [])}</pre>
+      </section>
+    `
+    : "";
+  const translations = (support.lineTranslations ?? [])
+    .map(
+      (item, index) => `
+        <li>
+          <span>${index + 1}</span>
+          <p><b>${item.text}</b>${item.translation}</p>
+        </li>
+      `,
+    )
+    .join("");
+  const notes = (support.wordNotes ?? [])
+    .map((item) => `<span><b>${item.word}</b>${item.meaning}</span>`)
+    .join("");
+  const sentences = (support.specialSentences ?? [])
+    .map((item) => `<li><b>${item.label}</b>${item.text}</li>`)
+    .join("");
+
+  return `
+    <section class="classical-reading-block">
+      ${segmented}
+      ${translations ? `
+        <section class="classical-reading-panel">
+          <strong>逐句翻译</strong>
+          <ol class="classical-translation-list">${translations}</ol>
+        </section>
+      ` : ""}
+      ${notes ? `
+        <section class="classical-reading-panel">
+          <strong>重点字词</strong>
+          <div class="classical-word-notes">${notes}</div>
+        </section>
+      ` : ""}
+      ${sentences ? `
+        <section class="classical-reading-panel">
+          <strong>特殊句式</strong>
+          <ul class="classical-sentence-list">${sentences}</ul>
+        </section>
+      ` : ""}
+    </section>
+  `;
+}
+
+function annotateClassicalText(text, notes) {
+  return notes.reduce((result, note) => {
+    if (!note.word) {
+      return result;
+    }
+    return result.replaceAll(
+      note.word,
+      `<mark title="${escapeAttribute(note.meaning)}">${note.word}</mark>`,
+    );
+  }, text);
 }
 
 function renderStemChapterCard(subjectId, chapter) {
@@ -1890,105 +1948,132 @@ function renderStemPracticeQuestion(question) {
 }
 
 function buildStemFillQuestion(subjectId, chapter, lesson, index) {
-  const point = lesson.keyPoints?.[index % lesson.keyPoints.length] ?? lesson.title;
-  const templates = {
-    math: {
-      prompt: `填空：预习“${point}”时，必须先确认 ______，再决定公式或方法。`,
-      answer: "题目条件是否满足定义、公式或图形关系的适用范围",
-      explanation: "数学题的第一步是审条件。条件不满足时，公式看起来相似也不能直接套。",
-    },
-    physics: {
-      prompt: `填空：分析“${point}”时，示意图至少要标出 ______ 和 ______。`,
-      answer: "相关物理量；方向、单位或实验条件",
-      explanation: "物理题先把情境转成图和量，再判断公式或结论是否适用。",
-    },
-    chemistry: {
-      prompt: `填空：判断“${point}”时，要写清现象、______ 和结论。`,
-      answer: "判断依据",
-      explanation: "化学题不能只写结论，要把宏观现象和证据写出来。",
-    },
-  };
-  const template = templates[subjectId] ?? templates.math;
-  return {
-    id: `${chapter.id}-${lesson.id}-fill-${index + 1}`,
-    type: "fill",
-    level: "基础",
-    concept: point,
-    prompt: template.prompt,
-    answer: template.answer,
-    explanation: template.explanation,
-    trap: lesson.commonMistakes?.[0] ?? stemDefaultTrap(subjectId),
-    sourceNote: "原创变式 · 真题考法参考",
-  };
+  const base = lesson.practiceSet?.find((question) => ["blank", "experiment"].includes(question.type));
+  if (base) {
+    return practiceSetToStemQuestion(base, "fill", index === 0 ? "基础" : "巩固");
+  }
+
+  return buildConcreteStemFallback(subjectId, chapter, lesson, index, "fill");
 }
 
 function buildStemCalculationQuestion(subjectId, chapter, lesson, index) {
-  const base = lesson.practiceSet?.[0];
+  const base = lesson.practiceSet?.find((question) => ["calculation", "blank"].includes(question.type)) ?? lesson.practiceSet?.[0];
   if (base) {
-    return {
-      id: `${base.id}-stem-calculation`,
-      type: "calculation",
-      level: index === 0 ? "基础" : "巩固",
-      concept: base.concept,
-      prompt: base.question,
-      answer: base.answer,
-      explanation: base.explanation,
-      trap: base.trap,
-      sourceNote: "原创变式 · 真题考法参考",
-    };
+    return practiceSetToStemQuestion(base, "calculation", index === 0 ? "基础" : "巩固");
   }
 
-  const point = lesson.keyPoints?.[0] ?? lesson.title;
-  return {
-    id: `${chapter.id}-${lesson.id}-calculation-${index + 1}`,
-    type: "calculation",
-    level: index === 0 ? "基础" : "巩固",
-    concept: point,
-    prompt: lesson.practice ?? `围绕“${point}”完成一道基础计算或推断题。`,
-    answer: stemOpenAnswer(subjectId),
-    explanation: stemOpenExplanation(subjectId, point),
-    trap: lesson.commonMistakes?.[0] ?? stemDefaultTrap(subjectId),
-    sourceNote: "原创变式 · 真题考法参考",
-  };
+  return buildConcreteStemFallback(subjectId, chapter, lesson, index, "calculation");
 }
 
 function buildStemComprehensiveQuestion(subjectId, chapter) {
   const lessons = chapter.lessons ?? [];
   const firstLesson = lessons[0] ?? {};
-  const firstPoint = firstLesson.keyPoints?.[0] ?? chapter.title;
-  const lastPoint = lessons.at(-1)?.keyPoints?.[0] ?? firstPoint;
-  const prompts = {
-    math: `综合题：把“${firstPoint}”和“${lastPoint}”放在同一道题里，先写条件，再列式求解，并说明舍去不合题意答案的理由。`,
-    physics: `综合题：围绕“${chapter.title}”设计一个生活情境，画图标出物理量，再用公式或实验条件解释结论。`,
-    chemistry: `综合题：围绕“${chapter.title}”写一条“现象 -> 判断依据 -> 符号/安全”的证据链。`,
-  };
+  const base = lessons
+    .flatMap((lesson) => lesson.practiceSet ?? [])
+    .find((question) => ["comprehensive", "experiment"].includes(question.type));
+  if (base) {
+    return practiceSetToStemQuestion(base, "comprehensive", "综合");
+  }
+
+  return buildConcreteStemFallback(subjectId, chapter, firstLesson, 0, "comprehensive");
+}
+
+function practiceSetToStemQuestion(base, type, level) {
   return {
-    id: `${chapter.id}-stem-comprehensive`,
-    type: "comprehensive",
-    level: "综合",
-    concept: chapter.title,
-    prompt: prompts[subjectId] ?? prompts.math,
-    answer: stemOpenAnswer(subjectId),
-    explanation: stemOpenExplanation(subjectId, chapter.title),
-    trap: stemDefaultTrap(subjectId),
+    id: `${base.id}-stem-${type}`,
+    type,
+    level,
+    concept: base.concept,
+    prompt: base.question,
+    choices: base.choices,
+    answer: base.answer,
+    explanation: base.explanation ?? base.solution,
+    trap: base.trap,
     sourceNote: "原创变式 · 真题考法参考",
   };
 }
 
-function stemOpenAnswer(subjectId) {
+function buildConcreteStemFallback(subjectId, chapter, lesson, index, type) {
+  const id = `${chapter.id}-${lesson?.id ?? "chapter"}-${type}-${index + 1}`;
+  const banks = {
+    math: {
+      fill: {
+        concept: "方程与数量关系",
+        prompt: "填空：方程 x² - 5x + 6 = 0 可分解为 (x-2)(x-3)=0，所以两个根是 ___。",
+        answer: "2 和 3",
+        explanation: "因式分解后令每个因式为 0。",
+        trap: "分解后只写出一个根。",
+      },
+      calculation: {
+        concept: "基础计算",
+        prompt: "解方程 x² - 4x = 0。",
+        answer: "x = 0 或 x = 4",
+        explanation: "提公因式得 x(x-4)=0。",
+        trap: "两边同时除以 x 会漏掉 x=0。",
+      },
+      comprehensive: {
+        concept: "实际应用",
+        prompt: "长方形长比宽多 3 cm，面积为 40 cm²。设宽为 x cm，列出方程并求宽。",
+        answer: "x(x+3)=40，x=5",
+        explanation: "x²+3x-40=0，(x-5)(x+8)=0，宽为正数，取 x=5。",
+        trap: "实际长度不能取负根。",
+      },
+    },
+    physics: {
+      fill: {
+        concept: "功的计算",
+        prompt: "填空：用 20N 的水平拉力拉小车前进 3m，拉力做功 ___J。",
+        answer: "60",
+        explanation: "W=Fs=20×3=60J。",
+        trap: "力和位移方向一致时才直接相乘。",
+      },
+      calculation: {
+        concept: "功率",
+        prompt: "某机器 5s 内做功 300J，求功率。",
+        answer: "60W",
+        explanation: "P=W/t=300÷5=60W。",
+        trap: "功率表示做功快慢，不是功的多少。",
+      },
+      comprehensive: {
+        concept: "电路判断",
+        prompt: "一个串联电路中灯泡突然不亮，电流表示数为 0，电压表并在灯泡两端有示数。判断灯泡可能发生的故障并说明理由。",
+        answer: "灯泡断路。",
+        explanation: "串联电路电流为 0 说明电路断开，电压表有示数说明断点可能在被测灯泡处。",
+        trap: "把电压表有示数误认为灯泡正常。",
+      },
+    },
+    chemistry: {
+      fill: {
+        concept: "化学变化",
+        prompt: "填空：蜡烛燃烧生成二氧化碳和水，说明蜡烛燃烧属于 ___ 变化。",
+        answer: "化学",
+        explanation: "有新物质生成是判断化学变化的核心依据。",
+        trap: "只看到蜡烛熔化，忽略燃烧生成物。",
+      },
+      calculation: {
+        concept: "质量守恒",
+        prompt: "12g 碳与 32g 氧气恰好完全反应，生成二氧化碳的质量是多少？",
+        answer: "44g",
+        explanation: "密闭反应中反应物总质量等于生成物总质量，12+32=44。",
+        trap: "漏算参加反应的氧气质量。",
+      },
+      comprehensive: {
+        concept: "氧气检验",
+        prompt: "实验室收集一瓶无色气体，如何检验它是否为氧气？写出现象和结论。",
+        answer: "把带火星的木条伸入集气瓶，木条复燃，说明该气体是氧气。",
+        explanation: "氧气能支持燃烧，带火星木条复燃是检验氧气的典型现象。",
+        trap: "把检验氧气和验满氧气混淆。",
+      },
+    },
+  };
+  const selected = banks[subjectId]?.[type] ?? banks.math[type] ?? banks.math.fill;
   return {
-    math: "按“已知 -> 方法 -> 计算 -> 检验”写完整过程。",
-    physics: "按“图示/变量 -> 公式或条件 -> 代入/解释 -> 结论”作答。",
-    chemistry: "按“现象 -> 判断依据 -> 结论/符号/安全”作答。",
-  }[subjectId] ?? "写出依据、过程和结论。";
-}
-
-function stemOpenExplanation(subjectId, point) {
-  return {
-    math: `这类题考 ${point} 的条件识别和步骤完整性，不是只看最后答案。`,
-    physics: `这类题考 ${point} 和情境、单位、变量之间的对应关系。`,
-    chemistry: `这类题考 ${point} 的证据链，现象、依据和结论要分开写。`,
-  }[subjectId] ?? `这类题要围绕 ${point} 写清依据。`;
+    id,
+    type,
+    level: type === "comprehensive" ? "综合" : index === 0 ? "基础" : "巩固",
+    ...selected,
+    sourceNote: "原创变式 · 真题考法参考",
+  };
 }
 
 function stemDefaultTrap(subjectId) {
@@ -3916,6 +4001,15 @@ function renderEnglishExtras(chapter) {
   const grammarNotes = chapter.grammarNotes
     .map((note, index) => {
       const item = mastery.items[index];
+      const examples = (note.examples ?? [note.example]).filter(Boolean)
+        .map((example) => `<li>${example}</li>`)
+        .join("");
+      const pitfalls = (note.pitfalls ?? [note.checkpoint]).filter(Boolean)
+        .map((pitfall) => `<li>${pitfall}</li>`)
+        .join("");
+      const practice = (note.practice ?? [note.drill]).filter(Boolean)
+        .map((task) => `<li>${task}</li>`)
+        .join("");
       return `
         <section class="grammar-note" data-grammar-note-card="${item.id}">
           <div class="grammar-note-head">
@@ -3931,9 +4025,9 @@ function renderEnglishExtras(chapter) {
             </button>
           </div>
           <p>${note.explanation}</p>
-          <p><span>例句</span>${note.example}</p>
-          <p><span>练习</span>${note.drill}</p>
-          <p><span>检查</span>${note.checkpoint}</p>
+          ${examples ? `<div class="grammar-teach-block"><span>例句</span><ul class="grammar-example-list">${examples}</ul></div>` : ""}
+          ${pitfalls ? `<div class="grammar-teach-block"><span>易错</span><ul class="grammar-pitfall-list">${pitfalls}</ul></div>` : ""}
+          ${practice ? `<div class="grammar-teach-block"><span>练习</span><ul class="grammar-practice-list">${practice}</ul></div>` : ""}
           ${renderGrammarMiniQuiz(note.miniQuiz)}
         </section>
       `;
@@ -3953,6 +4047,12 @@ function renderEnglishExtras(chapter) {
     `,
     "english-grammar-bank",
   );
+  const selfTestSection = renderEnglishSection(
+    "小自测",
+    `${chapter.unitSelfTest?.length ?? 0} 题`,
+    renderEnglishSelfTest(chapter),
+    "english-self-test-bank",
+  );
 
   return `
     <div class="english-extra">
@@ -3960,6 +4060,45 @@ function renderEnglishExtras(chapter) {
       ${phraseSection}
       ${patternSection}
       ${grammarSection}
+      ${selfTestSection}
+    </div>
+  `;
+}
+
+function renderEnglishSelfTest(chapter) {
+  const questions = chapter.unitSelfTest ?? [];
+  if (!questions.length) {
+    return `<p class="empty-note">本单元暂未配置小自测。</p>`;
+  }
+
+  return `
+    <div class="english-self-test">
+      ${questions
+        .map((question, index) => {
+          const choices = question.choices?.length
+            ? `
+              <ol class="english-self-test-choices">
+                ${question.choices.map((choice) => `<li>${choice}</li>`).join("")}
+              </ol>
+            `
+            : "";
+          return `
+            <article class="english-self-test-card">
+              <div>
+                <span>${String(index + 1).padStart(2, "0")}</span>
+                <strong>${question.type}</strong>
+              </div>
+              <p>${question.prompt}</p>
+              ${choices}
+              <details>
+                <summary>看答案和解析</summary>
+                <p><b>答案</b>${question.answer}</p>
+                <p><b>解析</b>${question.explanation}</p>
+              </details>
+            </article>
+          `;
+        })
+        .join("")}
     </div>
   `;
 }

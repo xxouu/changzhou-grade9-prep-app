@@ -3676,6 +3676,107 @@ body[data-view="home"] .version-card {
   color: #0f766e;
 }
 
+.classical-reading-block {
+  display: grid;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf2ea;
+}
+
+.classical-reading-panel {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fbfdf9;
+}
+
+.classical-reading-panel strong {
+  color: #294338;
+  font-size: 14px;
+}
+
+.classical-reading-panel pre {
+  margin: 0;
+  white-space: pre-wrap;
+  color: #334155;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.classical-reading-panel mark {
+  padding: 1px 3px;
+  border-radius: 4px;
+  background: #fef3c7;
+  color: #854d0e;
+}
+
+.classical-translation-list,
+.classical-sentence-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.classical-translation-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.classical-translation-list span {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: #eef6ee;
+  color: #2f5a46;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.classical-translation-list p {
+  margin: 0;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.classical-translation-list b,
+.classical-sentence-list b {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--ink);
+}
+
+.classical-word-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.classical-word-notes span,
+.classical-sentence-list li {
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.classical-word-notes b {
+  margin-right: 5px;
+  color: #166534;
+}
+
 .lesson-learning-loop {
   display: grid;
   grid-column: 1 / -1;
@@ -6276,7 +6377,8 @@ body[data-view="home"] .version-card {
   line-height: 1.55;
 }
 
-.grammar-note span {
+.grammar-note span,
+.grammar-teach-block span {
   display: inline-flex;
   margin-right: 6px;
   padding: 2px 6px;
@@ -6285,6 +6387,26 @@ body[data-view="home"] .version-card {
   color: #9a3412;
   font-size: 12px;
   font-weight: 800;
+}
+
+.grammar-teach-block {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+  align-items: start;
+}
+
+.grammar-example-list,
+.grammar-pitfall-list,
+.grammar-practice-list {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 18px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .grammar-mini-quiz {
@@ -6312,6 +6434,88 @@ body[data-view="home"] .version-card {
 
 .grammar-answer p {
   margin: 8px 0 0;
+}
+
+.english-self-test {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.english-self-test-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fffaf5;
+}
+
+.english-self-test-card > div:first-child {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.english-self-test-card span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border-radius: 7px;
+  background: #ffedd5;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.english-self-test-card strong {
+  color: #9a3412;
+  font-size: 14px;
+}
+
+.english-self-test-card p {
+  margin: 0;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.english-self-test-choices {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.english-self-test-choices li {
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.english-self-test-card details {
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.english-self-test-card summary {
+  cursor: pointer;
+  color: #9a3412;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.english-self-test-card b {
+  display: inline-flex;
+  margin-right: 6px;
+  color: #7c2d12;
+  font-size: 12px;
 }
 
 .grammar-answer strong {
@@ -7173,6 +7377,27 @@ body[data-view="home"] .version-card {
     border-radius: 6px;
   }
 
+  .grammar-teach-block {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .grammar-example-list,
+  .grammar-pitfall-list,
+  .grammar-practice-list {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .english-self-test {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .english-self-test-card {
+    padding: 10px;
+  }
+
   .grammar-answer {
     background: transparent;
   }
@@ -7238,6 +7463,8 @@ body[data-view="home"] .version-card {
   .stem-practice-card p,
   .stem-choice-list li,
   .grammar-note p,
+  .english-self-test-card p,
+  .english-self-test-choices li,
   .phrase-row strong,
   .phrase-row em {
     overflow-wrap: anywhere;

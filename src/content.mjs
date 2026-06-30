@@ -668,34 +668,39 @@ const englishUnits = [
 
 enrichEnglishUnits(englishUnits);
 
-curriculum.english.chapters = englishUnits.map(({ title, focus, words, phrases, sentencePatterns, sourceNote }, index) => ({
-  id: `eng-unit-${index + 1}`,
-  title,
-  overview: focus,
-  dailyWords: chunkWords(words, 5).map((group, dayIndex) => ({
-    day: dayIndex + 1,
-    words: group.map(normalizeEnglishWord),
-  })),
-  lessons: [
-    {
-      id: `eng-unit-${index + 1}-words`,
-      title: "每日单词预习",
-      keyPoints: ["先听读，再看释义", "用例句记含义", "不会的词进入复习队列"],
-      tasks: ["每天完成 5 个词", "遮住中文回忆意思", "用 2 个词造句"],
-    },
-    {
-      id: `eng-unit-${index + 1}-grammar`,
-      title: "语法与句型预习",
-      keyPoints: ["整理本单元重点句型", "观察连接词和时态", "用短句做替换练习"],
-      tasks: ["写 3 个例句", "完成 5 题小测"],
-    },
-  ],
-  phrases,
-  sentencePatterns,
-  grammarNotes: enrichEnglishGrammarNotes(index + 1, buildEnglishGrammarNotes(index + 1)),
-  translationDrills: buildEnglishTranslationDrills(index + 1, title, focus, words, phrases, sentencePatterns),
-  sourceNote: sourceNote ?? "参考课本词汇目录扩展，中文释义为预习版，待逐项人工校对",
-}));
+curriculum.english.chapters = englishUnits.map(({ title, focus, words, phrases, sentencePatterns, sourceNote }, index) => {
+  const unitNumber = index + 1;
+  const grammarNotes = enrichEnglishGrammarNotes(unitNumber, buildEnglishGrammarNotes(unitNumber));
+  return {
+    id: `eng-unit-${unitNumber}`,
+    title,
+    overview: focus,
+    dailyWords: chunkWords(words, 5).map((group, dayIndex) => ({
+      day: dayIndex + 1,
+      words: group.map(normalizeEnglishWord),
+    })),
+    lessons: [
+      {
+        id: `eng-unit-${unitNumber}-words`,
+        title: "每日单词预习",
+        keyPoints: ["先听读，再看释义", "用例句记含义", "不会的词进入复习队列"],
+        tasks: ["每天完成 5 个词", "遮住中文回忆意思", "用 2 个词造句"],
+      },
+      {
+        id: `eng-unit-${unitNumber}-grammar`,
+        title: "语法与句型预习",
+        keyPoints: ["整理本单元重点句型", "观察连接词和时态", "用短句做替换练习"],
+        tasks: ["写 3 个例句", "完成 5 题小测"],
+      },
+    ],
+    phrases,
+    sentencePatterns,
+    grammarNotes,
+    unitSelfTest: buildEnglishUnitSelfTest(unitNumber, title, grammarNotes, sentencePatterns, phrases),
+    translationDrills: buildEnglishTranslationDrills(unitNumber, title, focus, words, phrases, sentencePatterns),
+    sourceNote: sourceNote ?? "参考课本词汇目录扩展，中文释义为预习版，待逐项人工校对",
+  };
+});
 
 curriculum.english.flashcards = curriculum.english.chapters.flatMap((unit, index) =>
   buildWordlistFlashcards(unit, `eng-u${index + 1}`),
@@ -925,6 +930,7 @@ function chineseLesson(unitIndex, lessonIndex, number, title, meta) {
     intro: meta.intro,
     originalText: meta.originalText ?? "",
     textSource: meta.textSource ?? licensedModernText,
+    classicalSupport: meta.classicalSupport ?? null,
     dictationWords: meta.dictationWords,
     keyPoints,
     readingFocus,
@@ -996,6 +1002,129 @@ const poetryThreeText = `行路难（其一）
 不应有恨，何事长向别时圆？
 人有悲欢离合，月有阴晴圆缺，此事古难全。
 但愿人长久，千里共婵娟。`;
+
+const yueyangloujiClassicalSupport = {
+  segmentedText: `庆历四年春 / 滕子京谪守巴陵郡。越明年 / 政通人和 / 百废具兴。乃重修岳阳楼 / 增其旧制 / 刻唐贤今人诗赋于其上。属予作文以记之。
+
+予观夫巴陵胜状 / 在洞庭一湖。衔远山 / 吞长江 / 浩浩汤汤 / 横无际涯。朝晖夕阴 / 气象万千。`,
+  lineTranslations: [
+    {
+      text: "庆历四年春，滕子京谪守巴陵郡。",
+      translation: "庆历四年的春天，滕子京被贬为巴陵郡太守。",
+    },
+    {
+      text: "越明年，政通人和，百废具兴。",
+      translation: "到了第二年，政事顺利，百姓和乐，各种荒废的事业都兴办起来。",
+    },
+    {
+      text: "予观夫巴陵胜状，在洞庭一湖。",
+      translation: "我看那巴陵郡的美好景色，全在洞庭湖上。",
+    },
+    {
+      text: "不以物喜，不以己悲。",
+      translation: "不因外物好坏和个人得失而或喜或悲。",
+    },
+    {
+      text: "先天下之忧而忧，后天下之乐而乐。",
+      translation: "在天下人忧愁之前先忧愁，在天下人快乐之后才快乐。",
+    },
+  ],
+  wordNotes: [
+    { word: "谪守", meaning: "被贬官到外地任太守" },
+    { word: "越明年", meaning: "到了第二年" },
+    { word: "具", meaning: "同“俱”，全、都" },
+    { word: "属", meaning: "同“嘱”，嘱托" },
+    { word: "胜状", meaning: "美好的景色" },
+    { word: "浩浩汤汤", meaning: "水势浩大的样子" },
+    { word: "去国", meaning: "离开国都" },
+    { word: "微", meaning: "如果没有" },
+  ],
+  specialSentences: [
+    { label: "判断句", text: "此则岳阳楼之大观也。" },
+    { label: "倒装句", text: "多会于此：即“多于此会”。" },
+    { label: "固定句式", text: "览物之情，得无异乎？表示推测和反问。" },
+  ],
+};
+
+const zuiwengtingjiClassicalSupport = {
+  segmentedText: `环滁皆山也。其西南诸峰 / 林壑尤美。望之蔚然而深秀者 / 琅琊也。山行六七里 / 渐闻水声潺潺 / 而泻出于两峰之间者 / 酿泉也。
+
+峰回路转 / 有亭翼然临于泉上者 / 醉翁亭也。醉翁之意不在酒 / 在乎山水之间也。`,
+  lineTranslations: [
+    {
+      text: "环滁皆山也。",
+      translation: "环绕着滁州城的都是山。",
+    },
+    {
+      text: "望之蔚然而深秀者，琅琊也。",
+      translation: "远远望去树木茂盛、幽深秀丽的，是琅琊山。",
+    },
+    {
+      text: "醉翁之意不在酒，在乎山水之间也。",
+      translation: "醉翁的情趣不在酒上，而在山水之间。",
+    },
+    {
+      text: "人知从太守游而乐，而不知太守之乐其乐也。",
+      translation: "人们知道跟随太守游玩而快乐，却不知道太守是以他们的快乐为快乐。",
+    },
+  ],
+  wordNotes: [
+    { word: "环", meaning: "环绕" },
+    { word: "蔚然", meaning: "茂盛的样子" },
+    { word: "翼然", meaning: "像鸟张开翅膀一样" },
+    { word: "辄", meaning: "就" },
+    { word: "意", meaning: "情趣" },
+    { word: "寓", meaning: "寄托" },
+    { word: "伛偻", meaning: "弯腰曲背，指老人" },
+    { word: "觥筹", meaning: "酒杯和酒筹" },
+  ],
+  specialSentences: [
+    { label: "判断句", text: "望之蔚然而深秀者，琅琊也。" },
+    { label: "词类活用", text: "名之者谁：名，名词作动词，命名。" },
+    { label: "意动用法", text: "乐其乐：以众人的快乐为快乐。" },
+  ],
+};
+
+const huxintingClassicalSupport = {
+  segmentedText: `崇祯五年十二月 / 余住西湖。大雪三日 / 湖中人鸟声俱绝。
+
+是日更定矣 / 余拏一小舟 / 拥毳衣炉火 / 独往湖心亭看雪。
+
+雾凇沆砀 / 天与云与山与水 / 上下一白。湖上影子 / 惟长堤一痕 / 湖心亭一点 / 与余舟一芥 / 舟中人两三粒而已。`,
+  lineTranslations: [
+    {
+      text: "大雪三日，湖中人鸟声俱绝。",
+      translation: "大雪下了三天，湖中行人和鸟的声音都消失了。",
+    },
+    {
+      text: "是日更定矣，余拏一小舟。",
+      translation: "这一天初更以后，我撑着一只小船。",
+    },
+    {
+      text: "雾凇沆砀，天与云与山与水，上下一白。",
+      translation: "冰花一片弥漫，天、云、山、水，浑然一体，上上下下全是白色。",
+    },
+    {
+      text: "莫说相公痴，更有痴似相公者。",
+      translation: "不要说相公痴，还有像相公一样痴的人呢。",
+    },
+  ],
+  wordNotes: [
+    { word: "更定", meaning: "初更以后，晚上八点左右" },
+    { word: "拏", meaning: "撑、划" },
+    { word: "毳衣", meaning: "细毛皮衣" },
+    { word: "沆砀", meaning: "白气弥漫的样子" },
+    { word: "一白", meaning: "全白" },
+    { word: "芥", meaning: "小草，这里形容船很小" },
+    { word: "强饮", meaning: "勉强喝" },
+    { word: "客此", meaning: "客居在这里" },
+  ],
+  specialSentences: [
+    { label: "省略句", text: "是金陵人，客此：省略主语“他们”。" },
+    { label: "数量词妙用", text: "一痕、一点、一芥、两三粒，用小写大，表现雪景空阔。" },
+    { label: "关键词", text: "痴：既写雅兴，也写孤高和故国之思。" },
+  ],
+};
 
 curriculum.chinese.chapters = [
   {
@@ -1131,6 +1260,7 @@ curriculum.chinese.chapters = [
         genre: "古文",
         textSource: publicDomainText,
         originalText: yueyangloujiText,
+        classicalSupport: yueyangloujiClassicalSupport,
         intro: "文章借重修岳阳楼作记，先写洞庭湖景，再写迁客骚人的悲喜，最后提出古仁人的胸襟。预习时要背重点句，也要看写景怎样服务于“不以物喜，不以己悲”。",
         dictationWords: ["谪守", "浩浩汤汤", "淫雨", "樯倾楫摧", "薄暮冥冥", "心旷神怡", "宠辱偕忘", "先忧后乐", "政通人和", "百废具兴"],
         keyPoints: ["记叙与议论", "景物对比", "古仁人之心", "文言实词"],
@@ -1145,6 +1275,7 @@ curriculum.chinese.chapters = [
         genre: "古文",
         textSource: publicDomainText,
         originalText: zuiwengtingjiText,
+        classicalSupport: zuiwengtingjiClassicalSupport,
         intro: "文章围绕“乐”展开：山水之乐、宴饮之乐、游人之乐和太守之乐层层推进。预习时先疏通写景句，再理解“醉翁之意不在酒”的深层含义。",
         dictationWords: ["环滁", "林壑", "觥筹", "阴翳", "蔚然", "潺潺", "辄醉", "伛偻", "山肴野蔌", "峰回路转"],
         keyPoints: ["乐的层次", "骈散结合", "山水描写", "与民同乐"],
@@ -1159,6 +1290,7 @@ curriculum.chinese.chapters = [
         genre: "小品文",
         textSource: publicDomainText,
         originalText: huxintingText,
+        classicalSupport: huxintingClassicalSupport,
         intro: "文章用极简笔墨写雪夜西湖，景少而意足。“痴”是理解人物精神的钥匙。预习时要把白描句背熟，体会孤清、雅兴和故国之思的交织。",
         dictationWords: ["更定", "拏", "雾凇", "沆砀", "毳衣", "一芥", "强饮", "喃喃", "人鸟声俱绝", "上下一白"],
         keyPoints: ["白描手法", "孤高情怀", "数量词妙用", "文言句式"],
@@ -2670,9 +2802,98 @@ function enrichEnglishGrammarNotes(unitNumber, notes) {
   return [...notes.map((note) => ({ ...note, checkpoint: note.checkpoint ?? checkpointByTitle(note.title) })), thirdNotes[unitNumber]].map(
     (note, index) => ({
       ...note,
+      examples: note.examples ?? buildGrammarExamples(note),
+      pitfalls: note.pitfalls ?? buildGrammarPitfalls(note),
+      practice: note.practice ?? buildGrammarPracticeTasks(note),
       miniQuiz: buildGrammarMiniQuiz(unitNumber, note, index + 1),
     }),
   );
+}
+
+function buildGrammarExamples(note) {
+  const examples = [note.example];
+  if (/neither|either/i.test(note.title)) {
+    examples.push("Either you or I am going to clean the classroom.");
+  } else if (/It is/i.test(note.title)) {
+    examples.push("It is kind of you to help me with my homework.");
+  } else if (/because|原因/i.test(note.title)) {
+    examples.push("I stayed at home because it rained heavily.");
+  } else if (/although|though|让步/i.test(note.title)) {
+    examples.push("Although the task was hard, he finished it on time.");
+  } else if (/定语从句|who|which|that/i.test(note.title)) {
+    examples.push("The book that I borrowed yesterday is useful.");
+  } else {
+    examples.push(note.example.replace(/\.$/, "") + " in another situation.");
+  }
+  return uniqueText(examples).slice(0, 2);
+}
+
+function buildGrammarPitfalls(note) {
+  const pitfalls = [note.checkpoint];
+  if (/neither|either/i.test(note.title)) {
+    pitfalls.push("either...or... / neither...nor... 连接主语时，谓语常看靠近谓语的主语。");
+  } else if (/It is/i.test(note.title)) {
+    pitfalls.push("评价人的品质多用 of sb.，描述事情特点常用 for sb.。");
+  } else if (/because|原因/i.test(note.title)) {
+    pitfalls.push("because 和 so 不要在同一句里重复表达因果。");
+  } else if (/although|though|让步/i.test(note.title)) {
+    pitfalls.push("although / though 不和 but 连用。");
+  } else if (/if|unless/i.test(note.title)) {
+    pitfalls.push("unless 本身含有 if not 的意思，不要再重复加 not。");
+  } else if (/定语从句|who|which|that/i.test(note.title)) {
+    pitfalls.push("先找先行词，再判断用 who、which 还是 that。");
+  } else {
+    pitfalls.push("不要只背结构，要能换主语、换场景后仍然说对。");
+  }
+  return uniqueText(pitfalls).slice(0, 2);
+}
+
+function buildGrammarPracticeTasks(note) {
+  const tasks = [note.drill];
+  if (/neither|either/i.test(note.title)) {
+    tasks.push("把 Neither you nor he is careless. 改成 either...or... 的肯定句。");
+  } else if (/It is/i.test(note.title)) {
+    tasks.push("用 creative、modest 各写一句 It is ... of sb. to do ...。");
+  } else if (/because|原因/i.test(note.title)) {
+    tasks.push("用 because 和 since 分别写一句解释原因的句子。");
+  } else if (/although|though|让步/i.test(note.title)) {
+    tasks.push("把含 but 的让步句改成 although 开头。");
+  } else if (/定语从句|who|which|that/i.test(note.title)) {
+    tasks.push("用 who 和 which 各写一句描述人物或物品的句子。");
+  } else {
+    tasks.push("把例句换一个主语和场景，检查语序是否仍然正确。");
+  }
+  return uniqueText(tasks).slice(0, 2);
+}
+
+function buildEnglishUnitSelfTest(unitNumber, title, grammarNotes, sentencePatterns, phrases) {
+  const [firstNote, secondNote, thirdNote] = grammarNotes;
+  const [firstPattern] = sentencePatterns;
+  const [firstPhrase] = phrases;
+  const custom = {
+    1: [
+      englishSelfTestQuestion("选择", "Neither Tom nor his parents ___ at home now.", ["is", "are", "be"], "are", "neither...nor... 连接主语时谓语看靠近谓语的 his parents。"),
+      englishSelfTestQuestion("改写", "把 You are not careless. I am not careless. 改成 neither...nor... 句。", undefined, "Neither you nor I am careless.", "主语连接后谓语看靠近的 I，用 am。"),
+      englishSelfTestQuestion("翻译", "翻译：他想出这个好主意真有创造力。", undefined, "It is creative of him to come up with this good idea.", "creative 评价人的品质，用 of him；come up with 表示想出。"),
+      englishSelfTestQuestion("造句", "用 pay attention to 写一句提醒同学上课专心的句子。", undefined, "You should pay attention to the teacher in class.", "短语要整体使用，to 后接名词或动名词。"),
+      englishSelfTestQuestion("判断", "Either you or he are wrong. 这句话是否正确？", undefined, "不正确，应改为 Either you or he is wrong.", "either...or... 作主语时谓语看靠近的 he。"),
+    ],
+  };
+  if (custom[unitNumber]) {
+    return custom[unitNumber].map((item, index) => ({ id: `eng-unit-${unitNumber}-self-test-${index + 1}`, ...item }));
+  }
+
+  return [
+    englishSelfTestQuestion("选择", `学习 ${firstNote?.title ?? title} 时，最应该检查哪一项？`, ["连接词、语序或搭配是否正确", "句子越长越好", "只要关键词出现就对"], "连接词、语序或搭配是否正确", firstNote?.checkpoint ?? "语法题要看结构，不只看关键词。"),
+    englishSelfTestQuestion("填空", `用本单元句型补全一句话：${firstPattern ?? "It is ... to do ..."}`, undefined, firstNote?.example ?? firstPattern ?? "It is useful to preview every day.", "先套句型，再替换主语、形容词或动词。"),
+    englishSelfTestQuestion("造句", `用短语 ${firstPhrase ?? "本单元短语"} 写一句英文。`, undefined, `I can use ${firstPhrase ?? "this phrase"} in a sentence.`, "短语要按整体记忆，不拆开硬翻译。"),
+    englishSelfTestQuestion("判断", `预习 ${secondNote?.title ?? title} 后，怎样判断自己真的会用？`, undefined, secondNote?.drill ?? "能换一个主语和场景造句。", secondNote?.checkpoint ?? "能迁移使用，比只认得结构更重要。"),
+    englishSelfTestQuestion("翻译", `把“我会用本单元词汇和句型表达一个完整意思”翻译成英文。`, undefined, "I can use the words and sentence patterns in this unit to express a complete idea.", thirdNote?.checkpoint ?? "翻译句要有主语、谓语和完整意思。"),
+  ].map((item, index) => ({ id: `eng-unit-${unitNumber}-self-test-${index + 1}`, ...item }));
+}
+
+function englishSelfTestQuestion(type, prompt, choices, answer, explanation) {
+  return { type, prompt, choices, answer, explanation };
 }
 
 function buildGrammarMiniQuiz(unitNumber, note, noteIndex) {

@@ -23,24 +23,15 @@ test("version list renders confirmed textbook source notes", () => {
   assert.match(renderBlock, /source/);
 });
 
-test("chapter knowledge checklist renders all lesson groups instead of truncating to a preview", () => {
-  const checklistBlock = appSource.match(/function renderChapterKnowledgeChecklist\(checklist\) \{[\s\S]*?\n\}/)?.[0] ?? "";
-
-  assert.match(checklistBlock, /lessonGroups/);
-  assert.doesNotMatch(checklistBlock, /slice\(0,\s*12\)/);
-  assert.doesNotMatch(checklistBlock, /还有 \$\{restCount\}/);
-});
-
-test("chapter knowledge checklist lets students mark each knowledge point inline", () => {
+test("chapter knowledge checklist is not rendered in default chapter cards", () => {
+  const chapterBlock = appSource.match(/function renderChapterCard\(subjectId, chapter\) \{[\s\S]*?\nfunction renderChineseLessonBody/)?.[0] ?? "";
   const checklistBlock = appSource.match(/function renderChapterKnowledgeChecklist\(checklist\) \{[\s\S]*?\n\}/)?.[0] ?? "";
   const clickHandlerBlock = appSource.match(/els\.activityLibrary\.addEventListener\("click",[\s\S]*?\n  \}\);/)?.[0] ?? "";
   const statusHandlerBlock = appSource.match(/function handleChapterKnowledgeStatus\(button\) \{[\s\S]*?\n\}/)?.[0] ?? "";
 
+  assert.doesNotMatch(chapterBlock, /renderChapterKnowledgeChecklist/);
+  assert.doesNotMatch(chapterBlock, /knowledgeChecklist/);
   assert.match(checklistBlock, /data-chapter-knowledge-status/);
-  assert.match(checklistBlock, /data-card-id="\$\{item\.id\}"/);
-  assert.match(checklistBlock, /掌握/);
-  assert.match(checklistBlock, /再练/);
-  assert.match(checklistBlock, /不熟/);
   assert.match(clickHandlerBlock, /data-chapter-knowledge-status/);
   assert.match(clickHandlerBlock, /handleChapterKnowledgeStatus/);
   assert.match(statusHandlerBlock, /updateKnowledgeCardProgress/);
@@ -268,15 +259,17 @@ test("home dashboard focuses on a clear daily prep plan", () => {
 }
 );
 
-test("chapter support material is collapsed behind a compact disclosure by default", () => {
-  const chapterBlock = appSource.match(/function renderChapterCard\(subjectId, chapter\) \{[\s\S]*?\nfunction renderChapterSupportDetails/)?.[0] ?? "";
+test("default chapter cards omit repetitive support and mastery modules", () => {
+  const chapterBlock = appSource.match(/function renderChapterCard\(subjectId, chapter\) \{[\s\S]*?\nfunction renderChineseLessonBody/)?.[0] ?? "";
   const supportBlock = appSource.match(/function renderChapterSupportDetails\(content\) \{[\s\S]*?\nfunction renderLessonRowSummary/)?.[0] ?? "";
 
-  assert.match(chapterBlock, /supportBlocks/);
-  assert.match(chapterBlock, /renderChapterSupportDetails\(supportBlocks\)/);
-  assert.doesNotMatch(chapterBlock, /\$\{knowledgeMap\}/);
+  assert.doesNotMatch(chapterBlock, /supportBlocks/);
+  assert.doesNotMatch(chapterBlock, /renderChapterSupportDetails/);
+  assert.doesNotMatch(chapterBlock, /renderChapterMasteryChecklist/);
+  assert.doesNotMatch(chapterBlock, /renderChapterTieredPractice/);
+  assert.doesNotMatch(chapterBlock, /renderKnowledgeMap/);
+  assert.doesNotMatch(chapterBlock, /本章详细资料/);
   assert.match(supportBlock, /<details class="chapter-support-details">/);
-  assert.match(supportBlock, /需要时展开/);
 });
 
 test("math physics and chemistry chapters render knowledge first and practice by question type", () => {
@@ -389,9 +382,25 @@ test("Chinese lesson body renders intro, text disclosure, word table and focused
   assert.match(renderBlock, /chinese-original-text/);
   assert.match(renderBlock, /展开原文/);
   assert.match(renderBlock, /dictation-word-table/);
+  assert.match(renderBlock, /classical-reading-block/);
+  assert.match(renderBlock, /renderClassicalReadingSupport/);
+  assert.match(renderBlock, /断句朗读/);
+  assert.match(renderBlock, /逐句翻译/);
+  assert.match(renderBlock, /重点字词/);
   assert.match(renderBlock, /reading-focus-list/);
   assert.match(renderBlock, /writing-transfer-card/);
   assert.match(chapterBlock, /renderChineseLessonBody/);
+});
+
+test("Chinese public-domain classical lessons include segmented text, translations and glossary", () => {
+  assert.match(contentSource, /classicalSupport/);
+  assert.match(contentSource, /segmentedText/);
+  assert.match(contentSource, /lineTranslations/);
+  assert.match(contentSource, /wordNotes/);
+  assert.match(contentSource, /specialSentences/);
+  assert.match(contentSource, /庆历四年春 \/ 滕子京谪守巴陵郡/);
+  assert.match(contentSource, /庆历四年的春天，滕子京被贬为巴陵郡太守/);
+  assert.match(contentSource, /谪守/);
 });
 
 test("default lesson body no longer renders repeated learning-loop dashboards", () => {
@@ -472,6 +481,8 @@ test("English subject page keeps a simple unit word list without daily-plan clut
   assert.match(extrasBlock, /phraseSection/);
   assert.match(extrasBlock, /patternSection/);
   assert.match(extrasBlock, /grammarSection/);
+  assert.match(extrasBlock, /selfTestSection/);
+  assert.match(extrasBlock, /renderEnglishSelfTest/);
   assert.match(wordListBlock, /english-word-bank/);
   assert.match(wordListBlock, /renderEnglishSection/);
   assert.match(wordListBlock, /english-study-section/);
@@ -512,6 +523,36 @@ test("English subject page keeps a simple unit word list without daily-plan clut
   assert.doesNotMatch(extrasBlock, /renderDailyWords/);
   assert.doesNotMatch(extrasBlock, /每日背诵目录/);
   assert.doesNotMatch(extrasBlock, /Day \$\{day\.day\}/);
+});
+
+test("English grammar notes render deeper teaching fields and unit self-test", () => {
+  const grammarNoteBlock = appSource.match(/const grammarNotes = chapter\.grammarNotes[\s\S]*?const phraseSection/)?.[0] ?? "";
+  const selfTestBlock = appSource.match(/function renderEnglishSelfTest\(chapter\) \{[\s\S]*?\nfunction getEnglishMeaningMap/)?.[0] ?? "";
+  const contentBlock = contentSource.match(/function enrichEnglishGrammarNotes\(unitNumber, notes\) \{[\s\S]*?\nfunction buildGrammarMiniQuiz/)?.[0] ?? "";
+
+  assert.match(grammarNoteBlock, /note\.examples/);
+  assert.match(grammarNoteBlock, /note\.pitfalls/);
+  assert.match(grammarNoteBlock, /note\.practice/);
+  assert.match(grammarNoteBlock, /grammar-example-list/);
+  assert.match(grammarNoteBlock, /grammar-pitfall-list/);
+  assert.match(selfTestBlock, /english-self-test/);
+  assert.match(selfTestBlock, /chapter\.unitSelfTest/);
+  assert.match(selfTestBlock, /看答案和解析/);
+  assert.match(contentBlock, /examples:/);
+  assert.match(contentBlock, /pitfalls:/);
+  assert.match(contentSource, /unitSelfTest/);
+});
+
+test("STEM fallback practice questions avoid generic meta-prompts", () => {
+  const fillBlock = appSource.match(/function buildStemFillQuestion\(subjectId, chapter, lesson, index\) \{[\s\S]*?\nfunction buildStemCalculationQuestion/)?.[0] ?? "";
+  const comprehensiveBlock = appSource.match(/function buildStemComprehensiveQuestion\(subjectId, chapter\) \{[\s\S]*?\nfunction practiceSetToStemQuestion/)?.[0] ?? "";
+
+  assert.doesNotMatch(fillBlock, /必须先确认 ______/);
+  assert.doesNotMatch(fillBlock, /题目条件是否满足定义/);
+  assert.doesNotMatch(comprehensiveBlock, /围绕“\$\{chapter\.title\}”设计一个生活情境/);
+  assert.doesNotMatch(comprehensiveBlock, /写一条“现象 -> 判断依据 -> 符号\/安全”的证据链/);
+  assert.match(fillBlock, /buildConcreteStemFallback/);
+  assert.match(comprehensiveBlock, /buildConcreteStemFallback/);
 });
 
 test("English word and phrase pronunciation uses browser speech synthesis", () => {
