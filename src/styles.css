@@ -6992,7 +6992,7 @@ body[data-view="home"] .version-card {
   }
 
   .lesson-list {
-    padding: 0 0 12px;
+    padding: 0 14px 14px;
   }
 
   .lesson-row summary {
@@ -7151,7 +7151,7 @@ body[data-view="home"] .version-card {
   .stem-study-layout {
     grid-template-columns: 1fr;
     gap: 14px;
-    padding: 0;
+    padding: 14px;
   }
 
   .stem-point-card,

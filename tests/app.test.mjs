@@ -225,6 +225,15 @@ test("mobile English grammar cards keep title and mastery action from crowding",
   assert.match(mobileBlock, /\.grammar-mini-quiz\s*\{[\s\S]*?padding:\s*8px 10px/);
 });
 
+test("mobile non-English subject sections keep readable side gutters", () => {
+  const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
+
+  assert.match(mobileBlock, /\.stem-study-layout\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
+  assert.match(mobileBlock, /\.stem-study-layout\s*\{[\s\S]*?padding:\s*14px/);
+  assert.match(mobileBlock, /\.lesson-list\s*\{[\s\S]*?padding:\s*0 14px 14px/);
+  assert.match(mobileBlock, /\.stem-point-card,\s*[\s\S]*?\.stem-practice-card\s*\{[\s\S]*?padding:\s*10px/);
+});
+
 test("today panel is compact and folds diagnostics behind details", () => {
   const adaptiveBlock = appSource.match(/function renderAdaptiveSession\(\) \{[\s\S]*?\nfunction renderAllSubjectLearningLoop/)?.[0] ?? "";
   const todayBlock = appSource.match(/function renderTodayPlan\(\) \{[\s\S]*?\nfunction renderReviewQueue/)?.[0] ?? "";

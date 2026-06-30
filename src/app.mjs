@@ -4,7 +4,7 @@ import {
   getReviewCoverageSummary,
   getSubjectChapterIndex,
   subjectOrder,
-} from "./content.mjs?v=20260628-depth127";
+} from "./content.mjs?v=20260628-depth128";
 import {
   STORAGE_KEY,
   answerGrammarQuiz,
@@ -69,7 +69,7 @@ import {
   updateSelfCheckProgress,
   updateStudyOutputProgress,
   updateWritingMissionProgress,
-} from "./progress.mjs?v=20260628-depth127";
+} from "./progress.mjs?v=20260628-depth128";
 
 const state = {
   view: "home",
