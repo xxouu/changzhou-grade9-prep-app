@@ -58,17 +58,21 @@ test("english contains daily word groups for each unit", () => {
     assert.ok(totalWords.every((word) => word.cn && word.cn !== "释义待校对"), `${unit.title} should include Chinese meanings`);
     assert.ok(unit.phrases?.length >= 6, `${unit.title} should include key phrases`);
     assert.ok(unit.sentencePatterns?.length >= 3, `${unit.title} should include sentence patterns`);
-    assert.ok(unit.grammarNotes?.length >= 2, `${unit.title} should include grammar explanations`);
+    assert.ok(unit.grammarNotes?.length >= 5, `${unit.title} should include a full unit grammar pack`);
     assert.ok(unit.grammarNotes.every((note) => note.explanation && note.example && note.drill), `${unit.title} grammar notes should be actionable`);
   }
 });
 
 test("english grammar notes include enough actionable checkpoints", () => {
   for (const unit of curriculum.english.chapters) {
-    assert.ok(unit.grammarNotes?.length >= 3, `${unit.title} should include at least three grammar points`);
+    assert.ok(unit.grammarNotes?.length >= 5, `${unit.title} should include at least five grammar points`);
     assert.ok(
-      unit.grammarNotes.every((note) => note.explanation && note.example && note.drill && note.checkpoint),
-      `${unit.title} grammar notes should include explanation, example, drill and checkpoint`,
+      unit.grammarNotes.every((note) => note.explanation && note.example && note.drill && note.checkpoint && note.examFocus),
+      `${unit.title} grammar notes should include explanation, example, drill, checkpoint and exam focus`,
+    );
+    assert.ok(
+      unit.grammarNotes.every((note) => note.examples?.length >= 2 && note.pitfalls?.length >= 2 && note.practice?.length >= 2),
+      `${unit.title} grammar notes should include examples, pitfalls and practice tasks`,
     );
     assert.ok(
       unit.grammarNotes.every(
@@ -82,6 +86,17 @@ test("english grammar notes include enough actionable checkpoints", () => {
       `${unit.title} grammar notes should include a clickable mini quiz`,
     );
   }
+});
+
+test("english Unit 1 grammar pack covers the textbook conjunction system", () => {
+  const unit = curriculum.english.chapters.find((chapter) => chapter.title === "Unit 1 Know yourself");
+  const titles = unit.grammarNotes.map((note) => note.title).join(" / ");
+
+  assert.match(titles, /and.*but.*or.*so/i);
+  assert.match(titles, /both.*and/i);
+  assert.match(titles, /not only.*but also/i);
+  assert.match(titles, /either.*or.*neither.*nor/i);
+  assert.match(titles, /It is.*of.*for/i);
 });
 
 test("english units include translation drills that connect words, phrases and grammar", () => {
@@ -151,6 +166,27 @@ test("math practice questions look like real grade-nine math tasks instead of st
     true,
     "math questions should contain concrete mathematical quantities, relations or expressions",
   );
+});
+
+test("math chapter practice covers real exam question types", () => {
+  const requiredTypes = ["choice", "blank", "calculation", "comprehensive"];
+  const banned = /学习“|相关问题|怎样避免常见错误|只背一个结论|最可靠的依据/;
+
+  for (const chapter of curriculum.math.chapters) {
+    const questions = chapter.lessons.flatMap((lesson) => lesson.practiceSet ?? []);
+    const types = new Set(questions.map((question) => question.type));
+
+    for (const type of requiredTypes) {
+      assert.ok(types.has(type), `${chapter.title} should include ${type} practice`);
+    }
+
+    assert.ok(!types.has("experiment"), `${chapter.title} should not classify math questions as experiment`);
+    assert.ok(questions.every((question) => !banned.test(question.question)), `${chapter.title} should avoid fake prompt questions`);
+    assert.ok(
+      questions.every((question) => question.choices?.length >= 2 && question.answer && question.explanation),
+      `${chapter.title} questions need answerable options and explanations`,
+    );
+  }
 });
 
 test("chemistry practice questions use concrete experiment contexts instead of meta prompts", () => {
@@ -319,8 +355,13 @@ test("curriculum coverage summary exposes subject coverage and review gaps", () 
   assert.ok(summary.totals.practiceQuestions >= summary.totals.lessons * 2);
 
   const english = summary.subjects.find((subject) => subject.id === "english");
+  const expectedGrammarCount = curriculum.english.chapters.reduce(
+    (sum, chapter) => sum + (chapter.grammarNotes?.length ?? 0),
+    0,
+  );
   assert.equal(english.wordCount, curriculum.english.flashcards.length);
-  assert.equal(english.grammarCount, 24);
+  assert.equal(english.grammarCount, expectedGrammarCount);
+  assert.ok(english.grammarCount >= curriculum.english.chapters.length * 5);
   assert.equal(english.gaps.length, 0);
 
   assert.equal(summary.review.pendingCount, 0);

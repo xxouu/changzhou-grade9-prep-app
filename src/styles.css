@@ -6377,6 +6377,24 @@ body[data-view="home"] .version-card {
   line-height: 1.55;
 }
 
+.grammar-exam-focus {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  background: #fff7ed;
+}
+
+.grammar-exam-focus p {
+  margin: 0;
+  color: #7c2d12;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .grammar-note span,
 .grammar-teach-block span {
   display: inline-flex;
@@ -7380,6 +7398,12 @@ body[data-view="home"] .version-card {
   .grammar-teach-block {
     grid-template-columns: 1fr;
     gap: 6px;
+  }
+
+  .grammar-exam-focus {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 8px 10px;
   }
 
   .grammar-example-list,

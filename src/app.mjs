@@ -4010,6 +4010,9 @@ function renderEnglishExtras(chapter) {
       const practice = (note.practice ?? [note.drill]).filter(Boolean)
         .map((task) => `<li>${task}</li>`)
         .join("");
+      const examFocus = note.examFocus
+        ? `<div class="grammar-exam-focus"><span>考法</span><p>${note.examFocus}</p></div>`
+        : "";
       return `
         <section class="grammar-note" data-grammar-note-card="${item.id}">
           <div class="grammar-note-head">
@@ -4025,6 +4028,7 @@ function renderEnglishExtras(chapter) {
             </button>
           </div>
           <p>${note.explanation}</p>
+          ${examFocus}
           ${examples ? `<div class="grammar-teach-block"><span>例句</span><ul class="grammar-example-list">${examples}</ul></div>` : ""}
           ${pitfalls ? `<div class="grammar-teach-block"><span>易错</span><ul class="grammar-pitfall-list">${pitfalls}</ul></div>` : ""}
           ${practice ? `<div class="grammar-teach-block"><span>练习</span><ul class="grammar-practice-list">${practice}</ul></div>` : ""}

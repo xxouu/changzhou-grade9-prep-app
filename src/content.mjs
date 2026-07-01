@@ -2609,16 +2609,39 @@ function buildEnglishGrammarNotes(unitNumber) {
   const notes = {
     1: [
       {
-        title: "并列连词 either...or... / neither...nor...",
-        explanation: "连接两个并列成分，作主语时谓语通常遵循就近原则。",
-        example: "Neither you nor he is careless.",
-        drill: "用 neither...nor... 改写：You are not wrong. He is not wrong.",
+        title: "并列连词 and / but / or / so",
+        explanation: "and 表并列或顺承，but 表转折，or 表选择或否则，so 表结果。先判断两个分句之间的逻辑，再选连词。",
+        example: "He is modest, but he is confident when he speaks.",
+        drill: "用 and、but、or、so 各写一句描述人物性格的句子。",
+        examFocus: "常考单选和完成句子：根据前后句的转折、选择、因果或并列关系选连词。",
       },
       {
-        title: "It is + adj. + of sb. + to do sth.",
-        explanation: "形容词评价人的品质时常用 of，如 kind、careful、modest。",
+        title: "both...and... 连接两个并列对象",
+        explanation: "both A and B 表示“A 和 B 两者都”，连接主语时谓语通常用复数。",
+        example: "Both Kitty and Simon are organized.",
+        drill: "用 both...and... 写一句说明两个人共同优点的句子。",
+        examFocus: "常考谓语单复数：both...and... 作主语时不要按靠近原则，要用复数。",
+      },
+      {
+        title: "not only...but also... 的递进表达",
+        explanation: "not only A but also B 表示“不但 A 而且 B”，B 往往是更进一步的信息；连接主语时谓语看靠近谓语的一项。",
+        example: "Not only the students but also their teacher is energetic.",
+        drill: "用 not only...but also... 写一句评价班长的句子。",
+        examFocus: "常考连接成分是否对等，以及作主语时的就近原则。",
+      },
+      {
+        title: "either...or... / neither...nor...",
+        explanation: "either...or... 表二选一，neither...nor... 表两者都不；连接主语时谓语通常遵循就近原则。",
+        example: "Neither you nor he is careless.",
+        drill: "用 neither...nor... 改写：You are not wrong. He is not wrong.",
+        examFocus: "常考就近原则：谓语形式看离谓语最近的主语。",
+      },
+      {
+        title: "It is + adj. + of/for sb. + to do sth.",
+        explanation: "形容词评价人的品质时常用 of，如 kind、careful、modest；描述事情对某人怎样时常用 for。",
         example: "It is creative of him to come up with a new idea.",
         drill: "用 modest 造一句评价人物品质的句子。",
+        examFocus: "常和 for sb. 区分：of sb. 评价人的品质，for sb. 强调事情对某人怎样。",
       },
     ],
     2: [
@@ -2627,12 +2650,28 @@ function buildEnglishGrammarNotes(unitNumber) {
         explanation: "表示宁愿做前者而不愿做后者，than 后接动词原形。",
         example: "I would rather wear blue than pink.",
         drill: "用 would rather 描述一个颜色选择。",
+        examFocus: "常考 than 后动词形式：would rather do A than do B。",
       },
       {
         title: "prefer ... to ... / prefer to do",
         explanation: "prefer A to B 表示比起 B 更喜欢 A；to 后可接名词或动名词。",
         example: "She prefers reading to watching TV.",
         drill: "用 prefer ... to ... 写一句学习偏好。",
+        examFocus: "常考 prefer doing A to doing B，两个动作形式要一致。",
+      },
+      {
+        title: "prefer to do rather than do",
+        explanation: "prefer to do A rather than do B 表示宁愿做 A 而不愿做 B，rather than 后接动词原形。",
+        example: "I prefer to stay at home rather than go shopping.",
+        drill: "用 prefer to do rather than do 写一句颜色选择。",
+        examFocus: "常考和 prefer doing to doing 的结构转换。",
+      },
+      {
+        title: "宾语从句 that",
+        explanation: "that 引导陈述意义的宾语从句，放在 think、believe、know、feel 等动词后，从句用陈述句语序。",
+        example: "I believe that colours can influence our moods.",
+        drill: "用 I think that... 写一句颜色对情绪的影响。",
+        examFocus: "常考从句语序：that 后保持“主语 + 谓语”。",
       },
     ],
     3: [
@@ -2641,12 +2680,28 @@ function buildEnglishGrammarNotes(unitNumber) {
         explanation: "how/what/when/where + to do 可作宾语，表达“怎样/什么/何时做”。",
         example: "I do not know how to deal with the problem.",
         drill: "用 what to do 或 how to do 写一个困惑。",
+        examFocus: "常考 how to do 与 what to do 的区别：how 后面已有 do 的宾语，what 本身作 do 的宾语。",
       },
       {
         title: "提建议句型",
         explanation: "Why not do...? / What about doing...? 常用于给建议。",
         example: "Why not ask your teacher for help?",
         drill: "给一个熬夜学习的同学写两条建议。",
+        examFocus: "常考 Why not 后接动词原形，What about 后接动名词。",
+      },
+      {
+        title: "宾语从句中的疑问词",
+        explanation: "疑问词引导宾语从句时，从句要用陈述句语序。",
+        example: "Can you tell me when the meeting starts?",
+        drill: "把 When does the meeting start? 改成宾语从句。",
+        examFocus: "常考疑问句变宾语从句后不再倒装。",
+      },
+      {
+        title: "too much / much too / too many",
+        explanation: "too much 修饰不可数名词，too many 修饰可数名词复数，much too 修饰形容词或副词。",
+        example: "Too much homework makes me tired.",
+        drill: "用 too much、too many、much too 各写一个短句。",
+        examFocus: "常考词组辨析：看后面接名词还是形容词。",
       },
     ],
     4: [
@@ -2655,12 +2710,28 @@ function buildEnglishGrammarNotes(unitNumber) {
         explanation: "before、after、when、while、since、until 引导时间关系，注意主从句动作顺序。",
         example: "Spud practised hard before he became a great player.",
         drill: "用 before 和 until 各写一句成长经历。",
+        examFocus: "常考时间连词选择：先看两个动作谁先发生、谁持续到某时。",
       },
       {
         title: "让步与转折表达",
         explanation: "although/though 表示虽然，不能和 but 在同一句中重复使用。",
         example: "Although he was small, he never lost heart.",
         drill: "用 although 写一句逆境坚持。",
+        examFocus: "常考 although/though 不与 but 连用。",
+      },
+      {
+        title: "since 引导时间从句",
+        explanation: "since 表示“自从……以来”，主句常用现在完成时，从句常用一般过去时。",
+        example: "He has practised basketball since he was young.",
+        drill: "用 since 写一句从过去持续到现在的经历。",
+        examFocus: "常考主句 has/have done 与从句过去时搭配。",
+      },
+      {
+        title: "not...until... 直到……才",
+        explanation: "not...until... 表示某动作到某时间才发生，注意中文里常译为“直到……才”。",
+        example: "He did not give up until he succeeded.",
+        drill: "用 not...until... 写一句坚持的句子。",
+        examFocus: "常考 until 与 not...until 的意义区别。",
       },
     ],
     5: [
@@ -2669,12 +2740,28 @@ function buildEnglishGrammarNotes(unitNumber) {
         explanation: "because、since、as 都可表示原因，because 语气最直接。",
         example: "Tan Dun is famous because he makes music with common objects.",
         drill: "用 because 解释你喜欢的一种艺术形式。",
+        examFocus: "常考 because 和 so 不连用，since/as 更偏已知原因。",
       },
       {
         title: "让步状语从句",
         explanation: "though/although 引导让步，表达“虽然……但是含义”。",
         example: "Though the music is simple, it has a lasting value.",
         drill: "用 though 描述一件看似普通但有价值的事。",
+        examFocus: "常考 though/although 与 but 不能同时出现。",
+      },
+      {
+        title: "so that 目的状语从句",
+        explanation: "so that 表示目的时，后面常接 can、could、will 等情态或助动词。",
+        example: "He practises every day so that he can play better.",
+        drill: "用 so that 写一句练习艺术技能的目的。",
+        examFocus: "常考 so that 表目的还是结果，要看后面是否有 can/could 等。",
+      },
+      {
+        title: "because of + 名词短语",
+        explanation: "because 后接从句，because of 后接名词、代词或动名词短语。",
+        example: "The concert was cancelled because of the heavy rain.",
+        drill: "把 because 从句改写成 because of 短语。",
+        examFocus: "常考 because 与 because of 的后接成分。",
       },
     ],
     6: [
@@ -2683,12 +2770,28 @@ function buildEnglishGrammarNotes(unitNumber) {
         explanation: "if 表示如果，unless 表示除非；主句用将来意义时，从句常用一般现在时。",
         example: "You will miss the programme unless you hurry up.",
         drill: "把 if not 改写成 unless。",
+        examFocus: "常考主将从现：条件从句用一般现在时代替将来。",
       },
       {
         title: "while doing 省略结构",
         explanation: "当主从句主语一致时，可用 while doing 表示“当……时”。",
         example: "While watching TV, I took some notes.",
         drill: "用 while doing 写一句看节目时的动作。",
+        examFocus: "常考省略前后主语是否一致。",
+      },
+      {
+        title: "unless = if...not",
+        explanation: "unless 本身含有否定意义，通常可改写为 if...not。",
+        example: "Unless you work hard, you will fall behind.",
+        drill: "把 Unless you hurry up, you will miss it. 改成 if...not。",
+        examFocus: "常考 unless 句中不要再重复加 not。",
+      },
+      {
+        title: "if 引导宾语从句",
+        explanation: "if 也可表示“是否”，引导宾语从句；这时不遵循条件句的主将从现。",
+        example: "I wonder if the programme is live.",
+        drill: "用 if 写一句“我想知道是否……”的句子。",
+        examFocus: "常考 if 条件句和 if 宾语从句的区别。",
       },
     ],
     7: [
@@ -2697,12 +2800,28 @@ function buildEnglishGrammarNotes(unitNumber) {
         explanation: "用于电影人物或情节评价，表达让步关系。",
         example: "Although she was very tired, she kept working.",
         drill: "用 although 描述演员坚持拍摄。",
+        examFocus: "常考 although/though 与 but 不连用。",
       },
       {
         title: "so...that... / such...that...",
         explanation: "so 修饰形容词或副词，such 修饰名词短语，都表示“如此……以至于”。",
         example: "The film was so moving that many people cried.",
         drill: "分别用 so...that 和 such...that 写一句。",
+        examFocus: "常考 so + adj./adv.，such + 名词短语。",
+      },
+      {
+        title: "so that 表目的",
+        explanation: "so that 可表示“为了”，后面常接 can、could、will、would 等。",
+        example: "She worked hard so that she could play the lead role.",
+        drill: "用 so that 写一句演员努力的目的。",
+        examFocus: "常考 so that 与 so...that... 的区别。",
+      },
+      {
+        title: "过去完成时 had done",
+        explanation: "描述过去某一时间之前已经完成的动作时，可用 had done。",
+        example: "By the time she arrived, the film had started.",
+        drill: "用 by the time 写一句电影场景。",
+        examFocus: "常考两个过去动作的先后顺序。",
       },
     ],
     8: [
@@ -2711,12 +2830,28 @@ function buildEnglishGrammarNotes(unitNumber) {
         explanation: "who 指人，which 指物，that 常可指人或物，用来修饰前面的名词。",
         example: "The man who wears a coat is the suspect.",
         drill: "用 who 和 which 各写一个侦探故事线索。",
+        examFocus: "常考先行词是人还是物，以及从句是否紧跟先行词。",
       },
       {
         title: "被动语态线索表达",
         explanation: "was/were + 过去分词可描述案件中发生的动作。",
         example: "The victim was wounded with a knife.",
         drill: "用 was/were done 写一句案情描述。",
+        examFocus: "常考动作承受者作主语时用被动语态。",
+      },
+      {
+        title: "限制性定语从句",
+        explanation: "限制性定语从句提供必要信息，去掉后句意不完整或不清楚。",
+        example: "The clue that he found was important.",
+        drill: "用 that 写一句描述线索的句子。",
+        examFocus: "常考从句修饰哪个名词，避免修饰对象不清。",
+      },
+      {
+        title: "情态动词表推测",
+        explanation: "may、might、could 表可能，must 表有把握的肯定推测，can't 表有把握的否定推测。",
+        example: "The suspect might be at home.",
+        drill: "用 might 和 can't 各写一句案件推测。",
+        examFocus: "常考根据证据强弱选择 may/might/must/can't。",
       },
     ],
   };
@@ -2776,11 +2911,11 @@ function enrichEnglishGrammarNotes(unitNumber, notes) {
       checkpoint: "检查句子是在表达转折，还是表达结果。",
     },
     8: {
-      title: "限制性定语从句",
-      explanation: "who、which、that 引导定语从句，紧跟被修饰的先行词。",
-      example: "The clue that the detective found was important.",
-      drill: "用 that 写一句描述线索的句子。",
-      checkpoint: "检查从句是否真正修饰前面的名词。",
+      title: "关系代词作宾语时可省略",
+      explanation: "在限制性定语从句中，who、which、that 作宾语时常可省略；作主语时不能省略。",
+      example: "The clue (that) the detective found was important.",
+      drill: "写一句可以省略 that 的侦探线索句。",
+      checkpoint: "检查关系代词在从句中是主语还是宾语。",
     },
   };
   const checkpointByTitle = (title) => {
@@ -2802,12 +2937,59 @@ function enrichEnglishGrammarNotes(unitNumber, notes) {
   return [...notes.map((note) => ({ ...note, checkpoint: note.checkpoint ?? checkpointByTitle(note.title) })), thirdNotes[unitNumber]].map(
     (note, index) => ({
       ...note,
+      examFocus: note.examFocus ?? buildGrammarExamFocus(note),
       examples: note.examples ?? buildGrammarExamples(note),
       pitfalls: note.pitfalls ?? buildGrammarPitfalls(note),
       practice: note.practice ?? buildGrammarPracticeTasks(note),
       miniQuiz: buildGrammarMiniQuiz(unitNumber, note, index + 1),
     }),
   );
+}
+
+function buildGrammarExamFocus(note) {
+  if (/and.*but.*or.*so/i.test(note.title)) {
+    return "看前后句关系选连词：并列用 and，转折用 but，选择/否则用 or，结果用 so。";
+  }
+  if (/both.*and/i.test(note.title)) {
+    return "看连接主语后的谓语：both...and... 作主语时通常用复数。";
+  }
+  if (/not only.*but also/i.test(note.title)) {
+    return "看连接成分是否对等；连接主语时谓语看靠近谓语的一项。";
+  }
+  if (/neither|either/i.test(note.title)) {
+    return "看 A、B 是否并列；连接主语时用就近原则判断谓语形式。";
+  }
+  if (/It is/i.test(note.title)) {
+    return "看形容词评价人还是评价事情，区分 of sb. 和 for sb.。";
+  }
+  if (/prefer|would rather/i.test(note.title)) {
+    return "看动词形式是否平行，常考 prefer doing to doing 与 would rather do than do。";
+  }
+  if (/宾语从句|疑问词/i.test(note.title)) {
+    return "看连接词后是否保持陈述句语序，避免疑问倒装。";
+  }
+  if (/since|until|when|while|before|after|时间/i.test(note.title)) {
+    return "先画动作时间线，再判断连词、时态和主从句顺序。";
+  }
+  if (/because|原因|because of/i.test(note.title)) {
+    return "看后面接从句还是名词短语，并避免 because 和 so 连用。";
+  }
+  if (/although|though|让步/i.test(note.title)) {
+    return "看是否表达让步关系，并避免 although/though 与 but 连用。";
+  }
+  if (/if|unless/i.test(note.title)) {
+    return "区分条件句和宾语从句；条件句常考主将从现。";
+  }
+  if (/so.*that|such.*that|so that/i.test(note.title)) {
+    return "看是程度导致结果，还是表示目的；注意 so 与 such 后接成分不同。";
+  }
+  if (/定语从句|who|which|that|关系代词/i.test(note.title)) {
+    return "先找先行词，再判断关系代词指人、指物，以及在从句中作什么成分。";
+  }
+  if (/被动|过去完成|情态动词/i.test(note.title)) {
+    return "看主语和动作关系、动作先后，或证据强弱，再选结构。";
+  }
+  return "常考结构识别、句型转换和中译英，重点看连接词、语序和搭配。";
 }
 
 function buildGrammarExamples(note) {
@@ -4640,6 +4822,7 @@ function buildMathPracticeSet(chapter, lessonItem) {
     "math-1-1": [
       mathPractice("基础", "一元二次方程", "下列方程中，属于一元二次方程的是哪一个？", ["3x + 1 = 0", "x² - 4x + 3 = 0", "1/x + x = 2"], "x² - 4x + 3 = 0", "只含一个未知数，且整理后最高次数为 2，二次项系数不为 0。", "没有整理成整式方程就直接判断。"),
       mathPractice("基础", "标准形式", "把 2x(x - 3) = x + 5 化成 ax² + bx + c = 0 的形式。", ["2x² - 7x - 5 = 0", "2x² - 5x + 5 = 0", "2x² - 6x = x + 5"], "2x² - 7x - 5 = 0", "展开得 2x² - 6x = x + 5，移项得 2x² - 7x - 5 = 0。", "移项时符号容易写反。"),
+      mathPractice("基础", "二次项系数", "方程 ax² + bx + c = 0 成为一元二次方程时，必须满足 ______。", ["a ≠ 0", "b ≠ 0", "c ≠ 0"], "a ≠ 0", "一元二次方程必须有二次项，二次项系数不能为 0。", "只看形式 ax² + bx + c，忘记限制 a 的取值。", { type: "blank" }),
     ],
     "math-1-2": [
       mathPractice("基础", "因式分解法", "解方程 x² - 5x + 6 = 0。", ["x = 2 或 x = 3", "x = -2 或 x = -3", "x = 1 或 x = 6"], "x = 2 或 x = 3", "x² - 5x + 6 = (x - 2)(x - 3)，所以 x = 2 或 x = 3。", "分解后漏掉一个根。"),
@@ -4656,6 +4839,7 @@ function buildMathPracticeSet(chapter, lessonItem) {
     "math-2-1": [
       mathPractice("基础", "垂径定理", "圆 O 的半径为 5，圆心 O 到弦 AB 的距离为 3，则弦 AB 的长为多少？", ["8", "6", "10"], "8", "垂径定理得半弦长为 √(5²-3²)=4，所以 AB=8。", "把圆心到弦的距离当成半弦长。"),
       mathPractice("巩固", "等弦性质", "同圆中，弦 AB = 弦 CD，则下列说法正确的是？", ["AB 和 CD 所对的圆心角相等", "AB 一定平行 CD", "AB 一定是直径"], "AB 和 CD 所对的圆心角相等", "同圆中等弦对等弧、等圆心角。", "把等弦性质误解成位置关系相同。"),
+      mathPractice("基础", "垂径定理填空", "圆 O 半径为 10，弦 AB=12，OM⊥AB，垂足为 M，则 AM=______。", ["6", "12", "8"], "6", "垂径定理说明垂直于弦的直径平分这条弦，所以 AM=AB÷2=6。", "忘记先取半弦，直接把 12 代入勾股。", { type: "blank" }),
     ],
     "math-2-2": [
       mathPractice("基础", "圆周角", "在圆 O 中，∠AOB = 100°，点 C 在圆上且与 O 在弦 AB 同侧外，则 ∠ACB 的度数是？", ["50°", "100°", "25°"], "50°", "同弧所对圆周角等于圆心角的一半，所以 ∠ACB=50°。", "把圆周角和圆心角看成相等。"),
@@ -4664,6 +4848,7 @@ function buildMathPracticeSet(chapter, lessonItem) {
     "math-2-3": [
       mathPractice("基础", "直线与圆的位置关系", "圆 O 的半径 r=5，圆心到直线 l 的距离 d=5，则直线 l 与圆 O 的位置关系是？", ["相切", "相交", "相离"], "相切", "d=r 时直线与圆相切。", "把 d=r 误判成相交。"),
       mathPractice("巩固", "切线长", "点 P 到圆心 O 的距离 OP=13，圆半径 OT=5，PT 为切线，则 PT 的长为多少？", ["12", "18", "8"], "12", "半径垂直切线，△OPT 为直角三角形，PT=√(13²-5²)=12。", "切线题忘记连接圆心与切点。"),
+      mathPractice("挑战", "切线与位置关系综合", "圆 O 半径为 6，点 P 在圆外，OP=10，过 P 作切线 PT。若直线 l 到圆心距离为 4，则下列结论正确的是？", ["PT=8，直线 l 与圆相交", "PT=4，直线 l 与圆相切", "PT=8，直线 l 与圆相离"], "PT=8，直线 l 与圆相交", "OT⊥PT，PT=√(10²-6²)=8；d=4<r=6，所以直线 l 与圆相交。", "把切线长计算和直线位置关系分开做，容易漏判断 d 与 r。", { type: "comprehensive" }),
     ],
     "math-2-4": [
       mathPractice("基础", "正多边形中心角", "正六边形的每个中心角是多少度？", ["60°", "90°", "120°"], "60°", "中心角 = 360°÷6 = 60°。", "把中心角和内角混淆。"),
@@ -4676,6 +4861,7 @@ function buildMathPracticeSet(chapter, lessonItem) {
     "math-3-2": [
       mathPractice("基础", "中位数", "数据 7，3，8，5，9 的中位数是？", ["7", "5", "8"], "7", "排序为 3，5，7，8，9，中间数是 7。", "没有先排序就取中间位置。"),
       mathPractice("巩固", "偶数个数据", "数据 12，15，10，18 的中位数是？", ["13.5", "15", "12"], "13.5", "排序为 10，12，15，18，中位数是 (12+15)÷2=13.5。", "偶数个数据要取中间两个数的平均数。"),
+      mathPractice("基础", "中位数填空", "数据 6，9，5，7，8 按从小到大排列后，中位数是 ______。", ["7", "8", "6"], "7", "排序为 5，6，7，8，9，中间第 3 个数是 7。", "中位数必须先排序。", { type: "blank" }),
     ],
     "math-3-3": [
       mathPractice("基础", "众数", "数据 2，3，3，4，5，5，5 的众数是？", ["5", "3", "4"], "5", "出现次数最多的是 5，共 3 次。", "众数看频数，不看大小。"),
@@ -4684,14 +4870,16 @@ function buildMathPracticeSet(chapter, lessonItem) {
     "math-3-4": [
       mathPractice("基础", "方差", "甲组数据 8，8，8，8；乙组数据 6，8，8，10。哪组更稳定？", ["甲组", "乙组", "一样稳定"], "甲组", "甲组方差为 0，波动最小，更稳定。", "平均数相同不代表稳定性相同。"),
       mathPractice("巩固", "离散程度", "若两组数据平均数相同，方差分别为 1.2 和 3.6，则哪组波动较小？", ["方差 1.2 的一组", "方差 3.6 的一组", "无法判断"], "方差 1.2 的一组", "方差越小，数据围绕平均数波动越小。", "把方差大误认为成绩更稳定。"),
+      mathPractice("挑战", "统计量综合判断", "甲、乙两名同学 5 次测试平均分都是 86，甲的方差为 4，乙的方差为 16。若选一名发挥更稳定的同学参加比赛，应选谁？", ["甲", "乙", "无法判断"], "甲", "平均数相同，方差越小成绩波动越小，甲更稳定。", "只看平均数相同就认为两人水平完全一样。", { type: "comprehensive" }),
     ],
     "math-4-1": [
-      mathPractice("基础", "等可能概率", "袋中有 3 个红球、2 个白球，除颜色外完全相同，任取 1 个球，取到红球的概率是？", ["3/5", "2/5", "1/3"], "3/5", "共有 5 个等可能结果，其中红球 3 个。", "分母应是所有等可能结果数。"),
+      mathPractice("基础", "等可能概率", "袋中有 3 个红球、2 个白球，除颜色外完全相同，任取 1 个球，取到红球的概率是？", ["3/5", "2/5", "1/3"], "3/5", "共有 5 个等可能结果，其中红球 3 个。", "分母应是所有等可能结果数。", { type: "choice" }),
       mathPractice("巩固", "等可能判断", "掷一枚均匀骰子一次，点数大于 4 的概率是？", ["1/3", "1/2", "2/3"], "1/3", "大于 4 的点数是 5、6，共 2 种，概率 2/6=1/3。", "把“大于 4”误数成 4、5、6。"),
     ],
     "math-4-2": [
       mathPractice("基础", "列表法", "同时抛掷两枚硬币，出现一正一反的概率是？", ["1/2", "1/4", "3/4"], "1/2", "样本空间为 正正、正反、反正、反反，一正一反有 2 种，概率 1/2。", "正反和反正是两个不同结果。"),
       mathPractice("巩固", "两步试验", "甲、乙各从数字 1，2，3 中任取一个数，两个数相同的概率是？", ["1/3", "1/6", "2/3"], "1/3", "共有 3×3=9 种结果，相同有 (1,1),(2,2),(3,3) 共 3 种。", "列表时漏掉顺序组合。"),
+      mathPractice("基础", "样本空间填空", "同时抛掷两枚硬币，所有等可能结果共有 ______ 种。", ["4", "2", "3"], "4", "两枚硬币结果为正正、正反、反正、反反，共 4 种。", "正反和反正要分开计数。", { type: "blank" }),
     ],
     "math-4-3": [
       mathPractice("基础", "树状图", "从数字 1，2 中先后各取一次且放回，两次数字之和为 3 的概率是？", ["1/2", "1/4", "1"], "1/2", "结果有 (1,1),(1,2),(2,1),(2,2)，和为 3 的有 2 种。", "放回试验每一步结果数不变。"),
@@ -4700,10 +4888,12 @@ function buildMathPracticeSet(chapter, lessonItem) {
     "math-4-4": [
       mathPractice("基础", "频率估计概率", "某种种子发芽试验 500 粒，发芽 460 粒，可估计发芽概率约为？", ["0.92", "0.46", "0.08"], "0.92", "频率 460÷500=0.92，可用来估计概率。", "频率是近似估计，不是每次必然结果。"),
       mathPractice("巩固", "频率稳定性", "抛硬币试验次数越多，正面朝上的频率通常会接近多少？", ["1/2", "1", "0"], "1/2", "均匀硬币正反两面等可能，频率会在大量试验中接近概率 1/2。", "少量试验的频率不能代表长期概率。"),
+      mathPractice("挑战", "概率综合", "袋中有 2 个红球、1 个白球，先任取 1 个放回，再任取 1 个。两次都取到红球的概率是多少？", ["4/9", "2/3", "1/3"], "4/9", "放回后两次相互独立，每次取到红球概率都是 2/3，所以两次都是红球的概率为 2/3×2/3=4/9。", "没有看清“放回”，把第二次总数误认为 2。", { type: "comprehensive" }),
     ],
     "math-5-1": [
       mathPractice("基础", "二次函数图像", "函数 y = -2x² + 3 的图像开口方向是？", ["向下", "向上", "不能判断"], "向下", "二次项系数 a=-2<0，抛物线开口向下。", "开口方向只看 a 的符号。"),
       mathPractice("巩固", "对称轴", "函数 y = x² - 4x + 1 的对称轴是？", ["x = 2", "x = -2", "x = 4"], "x = 2", "对称轴 x=-b/2a=4/2=2。", "公式中 -b 容易漏负号。"),
+      mathPractice("基础", "对称轴填空", "二次函数 y = x² - 6x + 5 的对称轴是直线 x = ______。", ["3", "-3", "6"], "3", "对称轴 x=-b/(2a)=6/2=3。", "公式里 -b 不要漏掉负号。", { type: "blank" }),
     ],
     "math-5-2": [
       mathPractice("基础", "顶点式", "函数 y = 2(x - 3)² - 5 的顶点坐标是？", ["(3，-5)", "(-3，-5)", "(3，5)"], "(3，-5)", "顶点式 y=a(x-h)²+k 的顶点是 (h,k)。", "括号内 x-3 对应 h=3，不是 -3。"),
@@ -4736,7 +4926,7 @@ function buildMathPracticeSet(chapter, lessonItem) {
 
 function inferPracticeType(subject, question, concept) {
   const text = `${question} ${concept}`;
-  if (/实验|观察|装置|木条|红磷|铁丝|排水法|气密性|过滤|电解水|测|探究/.test(text)) return "experiment";
+  if (subject !== "math" && /实验|观察|装置|木条|红磷|铁丝|排水法|气密性|过滤|电解水|测|探究/.test(text)) return "experiment";
   if (/综合|实际|应用|篱笆|利润|增长率|动态电路|故障|效率|滑轮组|空气中氧气含量/.test(text)) return "comprehensive";
   if (/______|填|取值范围|值为|多少|长为|概率|面积|功率|电阻|电流|电压|质量|体积比|相对分子质量|计量数/.test(text)) return "calculation";
   if (subject === "chemistry" && /物理性质|化学性质|变化|元素符号|化学式/.test(text)) return "blank";

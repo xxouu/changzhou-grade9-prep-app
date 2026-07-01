@@ -533,8 +533,10 @@ test("English grammar notes render deeper teaching fields and unit self-test", (
   assert.match(grammarNoteBlock, /note\.examples/);
   assert.match(grammarNoteBlock, /note\.pitfalls/);
   assert.match(grammarNoteBlock, /note\.practice/);
+  assert.match(grammarNoteBlock, /note\.examFocus/);
   assert.match(grammarNoteBlock, /grammar-example-list/);
   assert.match(grammarNoteBlock, /grammar-pitfall-list/);
+  assert.match(grammarNoteBlock, /grammar-exam-focus/);
   assert.match(selfTestBlock, /english-self-test/);
   assert.match(selfTestBlock, /chapter\.unitSelfTest/);
   assert.match(selfTestBlock, /看答案和解析/);
