@@ -213,6 +213,52 @@ test("chemistry practice questions use concrete experiment contexts instead of m
   );
 });
 
+test("physics chapter practice covers choice blank calculation and comprehensive tasks", () => {
+  const requiredTypes = ["choice", "blank", "calculation", "comprehensive"];
+  const banned = /学习“|相关问题|只背结论|必须包含什么|只抄题目|最好先/;
+  const physicsContext =
+    /N|J|W|Ω|V|A|kg|m|s|℃|F₁L₁|W=|P=|Q=|I=|U=|R=|电流|电压|电阻|功率|杠杆|动力臂|力臂|滑轮|功|动能|势能|机械能|热传递|热量|质量|内能|比热容|控制变量|电路|电源|导线|串联|并联/;
+
+  for (const chapter of curriculum.physics.chapters) {
+    const questions = chapter.lessons.flatMap((lesson) => lesson.practiceSet ?? []);
+    const types = new Set(questions.map((question) => question.type));
+
+    for (const type of requiredTypes) {
+      assert.ok(types.has(type), `${chapter.title} should include ${type} practice`);
+    }
+
+    assert.ok(questions.every((question) => !banned.test(question.question)), `${chapter.title} should avoid template prompts`);
+    assert.ok(
+      questions.every((question) => physicsContext.test([question.question, question.answer, question.explanation].join(" "))),
+      `${chapter.title} questions should contain physical quantities, units, formulas or circuit/mechanics contexts`,
+    );
+  }
+});
+
+test("chemistry chapter practice covers experiment and synthesis tasks", () => {
+  const requiredTypes = ["choice", "blank", "experiment", "comprehensive"];
+  const calculationChapters = new Set(["chem-chapter-3", "chem-chapter-4", "chem-chapter-5"]);
+  const banned = /围绕“|相关问题|只看题目长短|很好看|最可靠|哪一种判断/;
+
+  for (const chapter of curriculum.chemistry.chapters) {
+    const questions = chapter.lessons.flatMap((lesson) => lesson.practiceSet ?? []);
+    const types = new Set(questions.map((question) => question.type));
+
+    for (const type of requiredTypes) {
+      assert.ok(types.has(type), `${chapter.title} should include ${type} practice`);
+    }
+    if (calculationChapters.has(chapter.id)) {
+      assert.ok(types.has("calculation"), `${chapter.title} should include calculation practice`);
+    }
+
+    assert.ok(questions.every((question) => !banned.test(question.question)), `${chapter.title} should avoid template prompts`);
+    assert.ok(
+      questions.every((question) => question.choices?.length >= 2 && question.answer && question.explanation),
+      `${chapter.title} questions need choices, answers and explanations`,
+    );
+  }
+});
+
 test("STEM practice questions use explicit source types and real question forms", () => {
   const banned = /第一步应先确认什么|最可靠的依据|相关问题时|基础题前|预习“|学习“|先写依据|再选答案|最先应该完成哪一步/;
   const allowedTypes = new Set(["authorized-original", "original-variant"]);
