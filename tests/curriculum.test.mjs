@@ -518,6 +518,48 @@ test("Chinese lessons provide teacher-grade prep packages and controlled text so
   }
 });
 
+test("Chinese lessons include a usable preview guide and reading explanations", () => {
+  const lessons = curriculum.chinese.chapters.flatMap((chapter) => chapter.lessons);
+
+  for (const lesson of lessons) {
+    assert.ok(lesson.previewGuide, `${lesson.title} needs a preview guide`);
+    assert.ok(lesson.previewGuide.goal?.length >= 20, `${lesson.title} needs a concrete preview goal`);
+    assert.ok(lesson.previewGuide.readingSteps?.length >= 3, `${lesson.title} needs staged reading steps`);
+    assert.ok(
+      lesson.previewGuide.readingSteps.every((step) => /第一遍|第二遍|第三遍|先|再|最后|默写|批注|回答/.test(step)),
+      `${lesson.title} reading steps should tell students what to do`,
+    );
+    assert.ok(lesson.previewGuide.coreExplanation?.length >= 2, `${lesson.title} needs core explanations`);
+    assert.ok(lesson.previewGuide.answerMethod?.length >= 20, `${lesson.title} needs an answer method`);
+    assert.ok(lesson.readingExplanations?.length >= lesson.readingQuestions.length, `${lesson.title} needs reading explanations`);
+    assert.ok(
+      lesson.readingExplanations.every((item) => item.question && item.thinking && item.sampleAnswer),
+      `${lesson.title} reading explanations need question, thinking and sample answer`,
+    );
+  }
+});
+
+test("public-domain Chinese classical lessons include translation and reading practice", () => {
+  const publicLessons = curriculum.chinese.chapters
+    .flatMap((chapter) => chapter.lessons)
+    .filter((lesson) => lesson.textSource?.type === "public-domain");
+
+  assert.ok(publicLessons.length >= 4);
+  for (const lesson of publicLessons) {
+    const support = lesson.classicalSupport;
+    assert.ok(support, `${lesson.title} needs classical support`);
+    assert.ok(support.segmentedText?.includes("/"), `${lesson.title} needs segmented reading text`);
+    assert.ok(support.lineTranslations?.length >= 3, `${lesson.title} needs line translations`);
+    assert.ok(support.wordNotes?.length >= 6, `${lesson.title} needs word notes`);
+    assert.ok(support.specialSentences?.length >= 2, `${lesson.title} needs sentence or expression notes`);
+    assert.ok(support.practice?.length >= 2, `${lesson.title} needs translation and reading practice`);
+    assert.ok(
+      support.practice.every((item) => item.question && item.answer && item.explanation),
+      `${lesson.title} practice needs answers and explanations`,
+    );
+  }
+});
+
 test("chinese lessons include literacy practice for dictation, reading evidence and writing transfer", () => {
   const lessons = curriculum.chinese.chapters.flatMap((chapter) => chapter.lessons);
 

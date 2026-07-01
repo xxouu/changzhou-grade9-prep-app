@@ -384,9 +384,12 @@ test("Chinese lesson body renders intro, text disclosure, word table and focused
   assert.match(renderBlock, /dictation-word-table/);
   assert.match(renderBlock, /classical-reading-block/);
   assert.match(renderBlock, /renderClassicalReadingSupport/);
+  assert.match(renderBlock, /chinese-preview-guide/);
+  assert.match(renderBlock, /reading-explanation-list/);
   assert.match(renderBlock, /断句朗读/);
   assert.match(renderBlock, /逐句翻译/);
   assert.match(renderBlock, /重点字词/);
+  assert.match(renderBlock, /答题思路/);
   assert.match(renderBlock, /reading-focus-list/);
   assert.match(renderBlock, /writing-transfer-card/);
   assert.match(chapterBlock, /renderChineseLessonBody/);
@@ -398,6 +401,9 @@ test("Chinese public-domain classical lessons include segmented text, translatio
   assert.match(contentSource, /lineTranslations/);
   assert.match(contentSource, /wordNotes/);
   assert.match(contentSource, /specialSentences/);
+  assert.match(contentSource, /practice/);
+  assert.match(contentSource, /翻译/);
+  assert.match(contentSource, /阅读/);
   assert.match(contentSource, /庆历四年春 \/ 滕子京谪守巴陵郡/);
   assert.match(contentSource, /庆历四年的春天，滕子京被贬为巴陵郡太守/);
   assert.match(contentSource, /谪守/);

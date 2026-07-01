@@ -3676,6 +3676,97 @@ body[data-view="home"] .version-card {
   color: #0f766e;
 }
 
+.chinese-preview-guide {
+  display: grid;
+  gap: 9px;
+}
+
+.chinese-preview-guide > p,
+.chinese-preview-guide em {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.chinese-preview-guide ol {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: #41536a;
+  line-height: 1.65;
+}
+
+.chinese-preview-guide div {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f7fbf6;
+}
+
+.chinese-preview-guide div p {
+  margin: 0;
+  color: #385244;
+  line-height: 1.65;
+}
+
+.chinese-preview-guide em {
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: #fff8ed;
+  color: #7c3b13;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.reading-explanation-list {
+  display: grid;
+  gap: 8px;
+}
+
+.reading-explanation-list details,
+.classical-practice-list details {
+  border-radius: 8px;
+  background: #fbfdf9;
+}
+
+.reading-explanation-list summary,
+.classical-practice-list summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 10px;
+  cursor: pointer;
+  color: #1f2937;
+  font-weight: 800;
+}
+
+.reading-explanation-list summary span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #eef6ee;
+  color: #2f5a46;
+  font-size: 11px;
+}
+
+.reading-explanation-list details p,
+.classical-practice-list details p {
+  margin: 0;
+  padding: 0 10px 9px;
+  color: #526173;
+  line-height: 1.65;
+}
+
+.reading-explanation-list details b,
+.classical-practice-list details span {
+  margin-right: 6px;
+  color: #0f766e;
+}
+
 .classical-reading-block {
   display: grid;
   gap: 10px;
@@ -3775,6 +3866,18 @@ body[data-view="home"] .version-card {
 .classical-word-notes b {
   margin-right: 5px;
   color: #166534;
+}
+
+.classical-practice-list {
+  display: grid;
+  gap: 8px;
+}
+
+.classical-practice-list summary b {
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #fff4df;
+  color: #9a3412;
 }
 
 .lesson-learning-loop {

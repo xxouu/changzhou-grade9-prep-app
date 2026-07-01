@@ -1419,6 +1419,8 @@ function renderChineseLessonBody(lesson) {
   const questions = (lesson.readingQuestions ?? [])
     .map((question, index) => `<li><strong>${index + 1}.</strong> ${question}</li>`)
     .join("");
+  const previewGuide = renderChinesePreviewGuide(lesson.previewGuide);
+  const readingExplanations = renderChineseReadingExplanations(lesson.readingExplanations);
   const originalText = lesson.originalText
     ? `<pre>${lesson.originalText}</pre>`
     : `<p>${lesson.textSource?.note ?? "暂不展示全文，可使用课本阅读原文。"}</p>`;
@@ -1434,6 +1436,7 @@ function renderChineseLessonBody(lesson) {
         </div>
         <p>${lesson.intro ?? "先读标题和导读，再回到课本完成原文阅读。"}</p>
       </section>
+      ${previewGuide}
       <details class="chinese-original-text">
         <summary>展开原文</summary>
         ${originalText}
@@ -1451,11 +1454,56 @@ function renderChineseLessonBody(lesson) {
         <strong>阅读理解</strong>
         <ol class="reading-question-list">${questions}</ol>
       </section>
+      ${readingExplanations}
       <section class="writing-transfer-card">
         <strong>写作迁移</strong>
         <p>${lesson.writingTask ?? "提炼本课表达方法，换成自己的材料写一段话。"}</p>
       </section>
     </div>
+  `;
+}
+
+function renderChinesePreviewGuide(guide) {
+  if (!guide) {
+    return "";
+  }
+
+  const steps = (guide.readingSteps ?? []).map((step) => `<li>${step}</li>`).join("");
+  const explanations = (guide.coreExplanation ?? []).map((item) => `<p>${item}</p>`).join("");
+
+  return `
+    <section class="chinese-preview-guide">
+      <strong>预习导读</strong>
+      <p>${guide.goal}</p>
+      <ol>${steps}</ol>
+      <div>${explanations}</div>
+      <em>${guide.answerMethod}</em>
+    </section>
+  `;
+}
+
+function renderChineseReadingExplanations(items) {
+  if (!items?.length) {
+    return "";
+  }
+
+  const content = items
+    .map(
+      (item, index) => `
+        <details>
+          <summary><span>${index + 1}</span>${item.question}</summary>
+          <p><b>答题思路</b>${item.thinking}</p>
+          <p><b>参考表达</b>${item.sampleAnswer}</p>
+        </details>
+      `,
+    )
+    .join("");
+
+  return `
+    <section class="reading-explanation-list">
+      <strong>阅读讲解</strong>
+      ${content}
+    </section>
   `;
 }
 
@@ -1488,6 +1536,17 @@ function renderClassicalReadingSupport(support) {
   const sentences = (support.specialSentences ?? [])
     .map((item) => `<li><b>${item.label}</b>${item.text}</li>`)
     .join("");
+  const practice = (support.practice ?? [])
+    .map(
+      (item) => `
+        <details>
+          <summary><b>${item.type}</b>${item.question}</summary>
+          <p><span>答案</span>${item.answer}</p>
+          <p><span>解析</span>${item.explanation}</p>
+        </details>
+      `,
+    )
+    .join("");
 
   return `
     <section class="classical-reading-block">
@@ -1508,6 +1567,12 @@ function renderClassicalReadingSupport(support) {
         <section class="classical-reading-panel">
           <strong>特殊句式</strong>
           <ul class="classical-sentence-list">${sentences}</ul>
+        </section>
+      ` : ""}
+      ${practice ? `
+        <section class="classical-reading-panel">
+          <strong>翻译 / 阅读练习</strong>
+          <div class="classical-practice-list">${practice}</div>
         </section>
       ` : ""}
     </section>
