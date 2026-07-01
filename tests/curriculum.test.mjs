@@ -370,6 +370,25 @@ test("math physics and chemistry chapters include tiered practice sets", () => {
   }
 });
 
+test("physics chapter tiered practice uses concrete physics problems instead of study prompts", () => {
+  const banned = /画图时至少要标出|为什么要先统一单位|给一个新情境|怎样判断|改成生活情境|优先检查哪三件事|如何区分|只背结论|直接套结论|围绕“|使用“/;
+  const concretePhysics = /N|J|W|Ω|V|A|kg|m|s|℃|cm|杠杆|滑轮|小车|木块|热水|冷水|水|煤油|汽油机|打气筒|过山车|内能|电路|灯泡|电流表|电压表|电阻|变阻器|导线|电源/;
+
+  for (const chapter of curriculum.physics.chapters) {
+    const questions = chapter.chapterTieredPractice.flatMap((tier) => tier.questions);
+
+    assert.ok(questions.length >= 6, `${chapter.title} needs enough tiered physics questions`);
+    assert.ok(
+      questions.every((question) => !banned.test([question.concept, question.question, question.answer, question.explanation, question.trap].join(" "))),
+      `${chapter.title} should not contain repeated study-method prompts`,
+    );
+    assert.ok(
+      questions.every((question) => concretePhysics.test([question.question, question.answer, question.explanation].join(" "))),
+      `${chapter.title} questions should contain concrete physics contexts, quantities or apparatus`,
+    );
+  }
+});
+
 test("subject chapter index summarizes learning load and review material", () => {
   for (const subjectId of subjectOrder) {
     const index = getSubjectChapterIndex(curriculum, subjectId);
