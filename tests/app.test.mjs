@@ -6,6 +6,7 @@ const appSource = readFileSync(new URL("../src/app.mjs", import.meta.url), "utf8
 const stylesSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
 const htmlSource = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const contentSource = readFileSync(new URL("../src/content.mjs", import.meta.url), "utf8");
+const { curriculum } = await import("../src/content.mjs");
 
 test("home quick practice wrong feedback renders the repair panel", () => {
   const quickPracticeBlock = appSource.match(/function renderQuickPractice\(\) \{[\s\S]*?\n\}/)?.[0] ?? "";
@@ -112,7 +113,7 @@ test("activity library uses chapter switcher instead of rendering every chapter 
 test("subject default page omits utility dashboards and backend review blocks", () => {
   const renderAllBlock = appSource.match(/function renderAll\(\) \{[\s\S]*?\n\}/)?.[0] ?? "";
   const clearBlock = appSource.match(/function clearSubjectUtilityPanels\(\) \{[\s\S]*?\n\}/)?.[0] ?? "";
-  const subjectNavBlock = appSource.match(/function renderSubjectNav\(\) \{[\s\S]*?\nfunction renderMetrics/)?.[0] ?? "";
+  const subjectNavBlock = appSource.match(/function renderSubjectNav\(\) \{[\s\S]*?\nfunction renderViewVisibility/)?.[0] ?? "";
 
   assert.match(renderAllBlock, /clearSubjectUtilityPanels/);
   assert.doesNotMatch(renderAllBlock, /renderCoverageSummary\(\)/);
@@ -133,17 +134,24 @@ test("subject chapter area appears before practice panels and puts the active ch
 
   assert.ok(subjectPanelIndex > 0);
   assert.ok(homeViewIndex > 0);
+  assert.doesNotMatch(htmlSource, /课程预习库/);
+  assert.doesNotMatch(htmlSource, /id="subjectTitle"/);
+  assert.doesNotMatch(htmlSource, /id="subjectVersion"/);
+  assert.doesNotMatch(renderBlock, /subjectTitle/);
+  assert.doesNotMatch(renderBlock, /subjectVersion/);
   assert.ok(renderBlock.indexOf("const chapterCards = renderChapterCard(state.subject, activeChapter)") < renderBlock.indexOf("els.activityLibrary.innerHTML"));
   assert.ok(renderBlock.indexOf("renderChapterSwitcher(subject, activeChapter)") < renderBlock.indexOf("+\n    chapterCards"));
   assert.doesNotMatch(renderBlock, /renderSubjectLearningLoop/);
 });
 
 test("home dashboard is separated from subject pages", () => {
-  const navBlock = appSource.match(/function renderSubjectNav\(\) \{[\s\S]*?\nfunction renderMetrics/)?.[0] ?? "";
+  const navBlock = appSource.match(/function renderSubjectNav\(\) \{[\s\S]*?\nfunction renderViewVisibility/)?.[0] ?? "";
   const renderAllBlock = appSource.match(/function renderAll\(\) \{[\s\S]*?\n\}/)?.[0] ?? "";
 
   assert.match(htmlSource, /class="subject-view"/);
   assert.match(htmlSource, /class="home-view"/);
+  assert.match(stylesSource, /\[data-view-panel\]\[hidden\]/);
+  assert.match(stylesSource, /display:\s*none\s*!important/);
   assert.match(navBlock, /data-view="home"/);
   assert.match(navBlock, /首页/);
   assert.match(navBlock, /state\.view = "subject"/);
@@ -152,7 +160,6 @@ test("home dashboard is separated from subject pages", () => {
 
 test("home dashboard keeps only the primary daily work panels visible", () => {
   assert.match(stylesSource, /body\[data-view="home"\] \.version-card/);
-  assert.match(stylesSource, /\.home-view \.study-visual\s*\{[\s\S]*?display:\s*none/);
   assert.match(stylesSource, /\.home-view \.grammar-panel/);
   assert.match(stylesSource, /\.home-view \.math-panel/);
   assert.match(stylesSource, /\.home-view \.knowledge-review-panel/);
@@ -164,16 +171,34 @@ test("home dashboard keeps only the primary daily work panels visible", () => {
 
 test("mobile stylesheet uses compact top navigation and single-column content", () => {
   const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
+  const mobileChapterRail = mobileBlock.match(/\.chapter-switcher > div:last-child\s*\{[\s\S]*?\n  \}/)?.[0] ?? "";
+  const narrowBlock = stylesSource.match(/@media \(max-width: 430px\)[\s\S]*?\n\}/)?.[0] ?? "";
 
   assert.match(mobileBlock, /@media \(max-width: 720px\)/);
   assert.match(mobileBlock, /\.app-shell\s*\{[\s\S]*?display:\s*block/);
   assert.match(mobileBlock, /\.subject-nav\s*\{[\s\S]*?display:\s*flex/);
   assert.match(mobileBlock, /\.subject-nav button\s*\{[\s\S]*?flex:\s*0 0 auto/);
   assert.match(mobileBlock, /\.library-grid,[\s\S]*?\.chapter-index\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
-  assert.match(mobileBlock, /\.chapter-switcher > div:last-child\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(mobileChapterRail, /display:\s*flex/);
+  assert.match(mobileChapterRail, /overflow-x:\s*auto/);
+  assert.doesNotMatch(mobileChapterRail, /grid-template-columns/);
+  assert.doesNotMatch(narrowBlock, /overflow-y:\s*auto/);
   assert.match(mobileBlock, /\.english-word-grid\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
   assert.match(mobileBlock, /\.word-tools\s*\{[\s\S]*?display:\s*grid/);
   assert.match(mobileBlock, /\.stem-study-layout\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
+});
+
+test("mobile top navigation keeps a left safe gutter", () => {
+  const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
+  const sidebarBlock = mobileBlock.match(/\.sidebar\s*\{[\s\S]*?\n  \}/)?.[0] ?? "";
+  const subjectNavBlock = mobileBlock.match(/\.subject-nav\s*\{[\s\S]*?\n  \}/)?.[0] ?? "";
+  const mainViewBlock = mobileBlock.match(/\.main-view\s*\{[\s\S]*?\n  \}/)?.[0] ?? "";
+
+  assert.match(sidebarBlock, /padding:\s*14px 16px 10px/);
+  assert.match(subjectNavBlock, /margin:\s*0/);
+  assert.match(subjectNavBlock, /padding:\s*0 0 4px/);
+  assert.doesNotMatch(subjectNavBlock, /margin:\s*0 -/);
+  assert.match(mainViewBlock, /padding:\s*16px/);
 });
 
 test("mobile English word rows center the word and speaker control", () => {
@@ -191,25 +216,41 @@ test("mobile English phrase rows keep horizontal breathing room", () => {
   const mobileBlock = stylesSource.match(/\/\* Mobile compact layout \*\/[\s\S]*?\/\* End mobile compact layout \*\//)?.[0] ?? "";
 
   assert.match(mobileBlock, /\.phrase-row\s*\{[\s\S]*?grid-template-columns:\s*1fr/);
-  assert.match(mobileBlock, /\.phrase-row span\s*\{[\s\S]*?min-height:\s*56px/);
-  assert.match(mobileBlock, /\.phrase-row span\s*\{[\s\S]*?padding:\s*12px 14px/);
-  assert.match(mobileBlock, /\.phrase-row span\s*\{[\s\S]*?border:\s*1px solid #e3eadf/);
-  assert.match(mobileBlock, /\.phrase-row \.speak-button\s*\{[\s\S]*?align-self:\s*center/);
+  assert.match(mobileBlock, /\.phrase-item\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)\s*34px/);
+  assert.match(mobileBlock, /\.phrase-item\s*\{[\s\S]*?padding:\s*12px 0/);
+  assert.doesNotMatch(mobileBlock, /\.phrase-item\s*\{[\s\S]*?border:\s*1px solid/);
+  assert.match(mobileBlock, /\.phrase-row \.speak-button\s*\{[\s\S]*?width:\s*34px/);
   assert.match(mobileBlock, /\.phrase-row \.speak-button\s*\{[\s\S]*?justify-self:\s*end/);
 });
 
 test("desktop English phrase rows use a breathable grid layout", () => {
   const phraseBlock = stylesSource.match(/\.phrase-row\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
-  const phraseItemBlock = stylesSource.match(/\.phrase-row span\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+  const phraseItemBlock = stylesSource.match(/\.phrase-item\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
   const phraseButtonBlock = stylesSource.match(/\.phrase-row \.speak-button\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
 
   assert.match(phraseBlock, /display:\s*grid/);
   assert.match(phraseBlock, /grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(220px,\s*1fr\)\)/);
-  assert.match(phraseBlock, /gap:\s*12px/);
+  assert.match(phraseBlock, /gap:\s*4px 24px/);
   assert.match(phraseItemBlock, /grid-template-columns:\s*minmax\(0,\s*1fr\)\s*34px/);
-  assert.match(phraseItemBlock, /min-height:\s*58px/);
-  assert.match(phraseItemBlock, /padding:\s*10px 12px/);
+  assert.match(phraseItemBlock, /min-height:\s*50px/);
+  assert.match(phraseItemBlock, /padding:\s*8px 0/);
+  assert.match(phraseItemBlock, /border-bottom:\s*1px solid #eef3ed/);
+  assert.doesNotMatch(phraseItemBlock, /border-radius:\s*8px/);
   assert.match(phraseButtonBlock, /justify-self:\s*end/);
+});
+
+test("English learning sections use light dividers instead of nested card borders", () => {
+  const sectionBlock = stylesSource.match(/\.english-study-section\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+  const bodyBlock = stylesSource.match(/\.english-section-body\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+  const grammarBlock = stylesSource.match(/\.grammar-note\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+
+  assert.match(sectionBlock, /border-top:\s*1px solid #edf2ea/);
+  assert.doesNotMatch(sectionBlock, /border-radius/);
+  assert.match(bodyBlock, /padding-top:\s*12px/);
+  assert.doesNotMatch(bodyBlock, /border:\s*1px/);
+  assert.match(grammarBlock, /border-top:\s*1px solid #f1e4d5/);
+  assert.match(grammarBlock, /border-radius:\s*0/);
+  assert.doesNotMatch(grammarBlock, /background:\s*#fbfdf9/);
 });
 
 test("mobile English section headers and content keep side gutters", () => {
@@ -243,21 +284,41 @@ test("mobile non-English subject sections keep readable side gutters", () => {
 test("home dashboard focuses on a clear daily prep plan", () => {
   const adaptiveBlock = appSource.match(/function renderAdaptiveSession\(\) \{[\s\S]*?\nfunction renderAllSubjectLearningLoop/)?.[0] ?? "";
   const todayBlock = appSource.match(/function renderTodayPlan\(\) \{[\s\S]*?\nfunction renderReviewQueue/)?.[0] ?? "";
+  const renderAllBlock = appSource.match(/function renderAll\(\) \{[\s\S]*?\n\}/)?.[0] ?? "";
 
-  assert.match(htmlSource, /<h2>今日预习<\/h2>/);
+  assert.doesNotMatch(htmlSource, /class="hero-panel"/);
+  assert.doesNotMatch(htmlSource, /homeFocusTitle/);
+  assert.doesNotMatch(htmlSource, /homeFocusSub/);
+  assert.doesNotMatch(htmlSource, /continueButton/);
+  assert.doesNotMatch(htmlSource, /数学薄弱点/);
+  assert.doesNotMatch(htmlSource, /weakValue/);
+  assert.doesNotMatch(htmlSource, /class="metrics-grid"/);
   assert.match(htmlSource, /<h3>今日预习清单<\/h3>/);
+  assert.match(htmlSource, /id="resetButton"/);
   assert.doesNotMatch(htmlSource, /先英语建立手感/);
   assert.doesNotMatch(htmlSource, /进度只保存在当前浏览器/);
   assert.doesNotMatch(htmlSource, /今天先做这几项/);
+  assert.doesNotMatch(appSource, /function renderHomeFocus/);
+  assert.doesNotMatch(renderAllBlock, /renderHomeFocus/);
+  assert.doesNotMatch(renderAllBlock, /renderMetrics/);
   assert.doesNotMatch(adaptiveBlock, /home-focus-strip/);
   assert.match(adaptiveBlock, /details class="adaptive-details"/);
   assert.match(adaptiveBlock, /查看完整预习路线/);
   assert.match(todayBlock, /plan\.slice\(0,\s*3\)/);
   assert.match(todayBlock, /plan\.slice\(3\)/);
+  assert.match(todayBlock, /task-summary/);
+  assert.doesNotMatch(todayBlock, /activity\.prompt/);
   assert.match(todayBlock, /details class="more-tasks"/);
   assert.match(todayBlock, /更多可选任务/);
 }
 );
+
+test("Chinese daily preview copy avoids vague title-clue-emotion wording", () => {
+  assert.doesNotMatch(contentSource, /课文导读：抓标题、线索、情感/);
+  assert.doesNotMatch(contentSource, /情感线索/);
+  assert.match(contentSource, /课文预习：字词、背景、阅读问题/);
+  assert.match(contentSource, /作者背景和必会字词/);
+});
 
 test("default chapter cards omit repetitive support and mastery modules", () => {
   const chapterBlock = appSource.match(/function renderChapterCard\(subjectId, chapter\) \{[\s\S]*?\nfunction renderChineseLessonBody/)?.[0] ?? "";
@@ -546,6 +607,7 @@ test("English subject page keeps a simple unit word list without daily-plan clut
   assert.match(wordListBlock, /english-word-row/);
   assert.match(wordListBlock, /单词/);
   assert.match(wordListBlock, /<article class="english-word-row mode-\$\{mode\}"/);
+  assert.match(extrasBlock, /class="phrase-item"/);
   assert.match(extrasBlock, /getEnglishMeaningMap/);
   assert.match(extrasBlock, /ENGLISH_PHRASE_TRANSLATIONS/);
   assert.match(wordListBlock, /data-speak-english/);
@@ -742,6 +804,41 @@ test("grammar mini quizzes use a simple answer disclosure without fake input sta
   assert.doesNotMatch(renderBlock, /还不会/);
   assert.doesNotMatch(renderBlock, /quiz\.choices/);
   assert.doesNotMatch(renderBlock, /再选答案/);
+});
+
+test("English Unit 2 self test uses direct translation and sentence practice", () => {
+  const unit = curriculum.english.chapters.find((chapter) => chapter.title === "Unit 2 Colours");
+  const prompts = unit.unitSelfTest.map((question) => question.prompt).join("\n");
+  const answers = unit.unitSelfTest.map((question) => question.answer).join("\n");
+
+  assert.ok(unit);
+  assert.match(prompts, /翻译：我宁愿穿蓝色也不穿粉色。/);
+  assert.match(prompts, /改错：He would rather to stay at home than go out\./);
+  assert.match(prompts, /补全：She prefers reading ___ watching TV\./);
+  assert.match(prompts, /用 influence our moods 写一句英文。/);
+  assert.match(answers, /I would rather wear blue than pink\./);
+  assert.doesNotMatch(prompts, /最应该检查哪一项/);
+  assert.doesNotMatch(prompts, /怎样判断自己真的会用/);
+  assert.doesNotMatch(prompts, /句子越长越好/);
+  assert.doesNotMatch(prompts, /只要关键词出现就对/);
+});
+
+test("English grammar mini quizzes ask concrete tasks instead of meta-check questions", () => {
+  const unit = curriculum.english.chapters.find((chapter) => chapter.title === "Unit 2 Colours");
+  const miniQuizzes = unit.grammarNotes.map((note) => note.miniQuiz);
+  const quizText = miniQuizzes.map((quiz) => `${quiz.question}\n${quiz.answer}\n${quiz.explanation}`).join("\n");
+
+  assert.match(quizText, /翻译：我宁愿待在家也不愿出去。/);
+  assert.match(quizText, /补全：She prefers reading ___ watching TV\./);
+  assert.match(quizText, /改错：I prefer to stay at home rather than going shopping\./);
+  assert.doesNotMatch(quizText, /哪项搭配更需要注意/);
+  assert.doesNotMatch(quizText, /最应该检查/);
+  assert.doesNotMatch(quizText, /哪项最需要/);
+  for (const quiz of miniQuizzes) {
+    assert.equal(quiz.choices.length, 3);
+    assert.equal(quiz.choices.includes(quiz.answer), true);
+    assert.doesNotMatch(quiz.choices.join("\n"), /只要出现关键词|句子越长|最应该检查|哪项搭配/);
+  }
 });
 
 test("grammar practice panel skips the evidence textbox before choices", () => {

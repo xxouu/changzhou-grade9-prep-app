@@ -38,7 +38,6 @@ import {
   getStudyOutputSummary,
   getLessonSelfCheckSummary,
   getKnowledgeReviewQueue,
-  getMasterySummary,
   getMathDailyLessonMission,
   getMathLearningAdvice,
   getMathTieredPracticePlan,
@@ -157,9 +156,6 @@ const els = {
   reviewQueue: document.querySelector("#reviewQueue"),
   reviewCount: document.querySelector("#reviewCount"),
   modeBadge: document.querySelector("#modeBadge"),
-  streakValue: document.querySelector("#streakValue"),
-  flashcardValue: document.querySelector("#flashcardValue"),
-  weakValue: document.querySelector("#weakValue"),
   cardWord: document.querySelector("#cardWord"),
   cardCounter: document.querySelector("#cardCounter"),
   cardMeaning: document.querySelector("#cardMeaning"),
@@ -217,8 +213,6 @@ const els = {
   writingStructureCheck: document.querySelector("#writingStructureCheck"),
   writingLanguageCheck: document.querySelector("#writingLanguageCheck"),
   writingDoneButton: document.querySelector("#writingDoneButton"),
-  subjectTitle: document.querySelector("#subjectTitle"),
-  subjectVersion: document.querySelector("#subjectVersion"),
   coverageSummary: document.querySelector("#coverageSummary"),
   reviewCoverage: document.querySelector("#reviewCoverage"),
   subjectKnowledgeBank: document.querySelector("#subjectKnowledgeBank"),
@@ -226,7 +220,6 @@ const els = {
   activityLibrary: document.querySelector("#activityLibrary"),
   reviewerToggle: document.querySelector("#reviewerToggle"),
   resetButton: document.querySelector("#resetButton"),
-  continueButton: document.querySelector("#continueButton"),
 };
 
 function init() {
@@ -255,13 +248,6 @@ function bindEvents() {
     renderAll();
   });
 
-  els.continueButton.addEventListener("click", () => {
-    state.view = "home";
-    renderViewVisibility();
-    renderSubjectNav();
-    document.querySelector(".today-panel").scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-
   els.cardDirectionButton.addEventListener("click", () => {
     state.cardDirection = state.cardDirection === "en-cn" ? "cn-en" : "en-cn";
     state.cardRevealed = false;
@@ -284,7 +270,6 @@ function bindEvents() {
   state.cardIndex = 0;
   renderDailyWordMission();
   renderFlashcard();
-  renderMetrics();
   renderAdaptiveSession();
   renderReviewQueue();
   });
@@ -478,7 +463,6 @@ function bindEvents() {
       state.cardIndex = (state.cardIndex + 1) % queue.length;
       state.cardRevealed = false;
       renderFlashcard();
-      renderMetrics();
       renderReviewQueue();
     });
   });
@@ -492,7 +476,6 @@ function bindEvents() {
       state.knowledgeIndex = (state.knowledgeIndex + 1) % queue.length;
       renderKnowledgeReview();
       renderAdaptiveSession();
-      renderMetrics();
     });
   });
 
@@ -527,7 +510,6 @@ function bindEvents() {
 function renderAll() {
   renderSubjectNav();
   renderViewVisibility();
-  renderMetrics();
   renderAdaptiveSession();
   renderTodayPlan();
   renderReviewQueue();
@@ -610,13 +592,6 @@ function renderViewVisibility() {
   document.body.dataset.view = state.view;
 }
 
-function renderMetrics() {
-  const summary = getMasterySummary(curriculum.english.flashcards, state.progress);
-  els.streakValue.textContent = `${state.progress.streak || 0} 天`;
-  els.flashcardValue.textContent = `${summary.known}/${curriculum.english.flashcards.length}`;
-  els.weakValue.textContent = state.progress.weakTags.slice(0, 2).join("、") || "暂无";
-}
-
 function renderAdaptiveSession() {
   const session = getAdaptivePreviewSession(curriculum, state.progress);
   const allSubjectLoop = getAllSubjectLearningLoopSummary(curriculum, state.progress);
@@ -696,12 +671,12 @@ function renderTodayPlan() {
   const extraPlan = plan.slice(3);
   const renderTask = (activity) => {
     const done = state.progress.completedActivities.includes(activity.id);
+    const subjectName = curriculum[activity.subject]?.name ?? activity.subject;
     return `
       <article class="task-item ${done ? "done" : ""}">
         <div>
-          <span class="badge">${curriculum[activity.subject].name} · ${activity.minutes} 分钟</span>
+          <span class="task-summary">${subjectName} · ${activity.minutes} 分钟</span>
           <h4>${activity.title}</h4>
-          <p>${activity.prompt}</p>
         </div>
         <button data-complete="${activity.id}" type="button">${done ? "已完成" : "完成"}</button>
       </article>
@@ -1054,7 +1029,6 @@ function renderMathExercise() {
         <p>${mission.trap.repairAction}</p>
       `;
       saveProgress(localStorage, state.progress);
-      renderMetrics();
       renderReviewQueue();
       renderMathAdvice();
     });
@@ -1088,8 +1062,6 @@ function renderMathAdvice() {
 function renderActivityLibrary() {
   const subject = curriculum[state.subject];
   const activeChapter = getActiveChapter(subject);
-  els.subjectTitle.textContent = subject.name;
-  els.subjectVersion.textContent = curriculum.meta.defaultVersions[state.subject];
   const chapterCards = renderChapterCard(state.subject, activeChapter);
   els.activityLibrary.innerHTML =
     renderChapterSwitcher(subject, activeChapter) +
@@ -3258,7 +3230,6 @@ function handleQuickCheckAnswer(button) {
 
   state.progress = answerQuickCheck(state.progress, check, button.dataset.answer);
   saveProgress(localStorage, state.progress);
-  renderMetrics();
   renderReviewQueue();
 
   const card = button.closest("[data-check-card]");
@@ -3332,7 +3303,6 @@ function handlePracticeAnswer(button) {
 
   state.progress = answerPracticeQuestion(state.progress, question, button.dataset.answer);
   saveProgress(localStorage, state.progress);
-  renderMetrics();
   renderReviewQueue();
 
   const card = button.closest("[data-practice-card]");
@@ -3375,7 +3345,6 @@ function handleGrammarQuizAnswer(button) {
 
   state.progress = answerGrammarQuiz(state.progress, quiz, button.dataset.answer);
   saveProgress(localStorage, state.progress);
-  renderMetrics();
   renderReviewQueue();
 
   const card = button.closest("[data-grammar-card]");
@@ -3395,7 +3364,6 @@ function handleTranslationDrillAnswer(button) {
   const selectedAnswer = button.dataset.translationAnswer === "known" ? drill.answer : "还不能独立译出";
   state.progress = answerTranslationDrill(state.progress, drill, selectedAnswer);
   saveProgress(localStorage, state.progress);
-  renderMetrics();
   renderReviewQueue();
 
   const card = button.closest(".translation-card");
@@ -3612,7 +3580,6 @@ function handleSubjectKnowledgeStatus(button) {
   renderKnowledgeReview();
   renderReviewQueue();
   renderAdaptiveSession();
-  renderMetrics();
 }
 
 function handleLessonKnowledgeStatus(button) {
@@ -3651,7 +3618,6 @@ function handleChapterKnowledgeStatus(button) {
   renderSubjectKnowledgeBank();
   renderKnowledgeReview();
   renderAdaptiveSession();
-  renderMetrics();
 }
 
 function handleChapterMasteryToggle(button) {
@@ -4141,11 +4107,11 @@ function renderEnglishExtras(chapter) {
   const wordMeaningMap = getEnglishMeaningMap(chapter);
   const phrases = chapter.phrases
     .map((phrase) => `
-      <span>
+      <article class="phrase-item">
         <strong>${phrase}</strong>
         <em>${wordMeaningMap.get(phrase) ?? ENGLISH_PHRASE_TRANSLATIONS[phrase] ?? "释义待补充"}</em>
         <button class="speak-button" data-speak-english="${escapeAttribute(phrase)}" type="button" aria-label="朗读 ${escapeAttribute(phrase)}"><span aria-hidden="true">🔊</span></button>
-      </span>
+      </article>
     `)
     .join("");
   const patterns = chapter.sentencePatterns.map((pattern) => `<li>${pattern}</li>`).join("");

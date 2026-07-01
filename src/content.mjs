@@ -259,12 +259,12 @@ export const curriculum = {
       {
         id: "chi-reading",
         subject: "chinese",
-        title: "课文导读：抓标题、线索、情感",
+        title: "课文预习：字词、背景、阅读问题",
         minutes: 5,
         type: "reading",
         difficulty: "基础",
-        knowledgeTags: ["课文导读", "阅读理解", "情感线索"],
-        prompt: "读课文前先猜文章对象、叙述顺序和情感变化，读后用一句话验证。",
+        knowledgeTags: ["字词积累", "作者背景", "阅读问题"],
+        prompt: "先看作者背景和必会字词，再带着阅读问题预习课文。",
         answer: "预习目标是形成问题，不要求背诵原文。",
         reviewStatus: "approved",
       },
@@ -3259,16 +3259,23 @@ function buildEnglishUnitSelfTest(unitNumber, title, grammarNotes, sentencePatte
       englishSelfTestQuestion("造句", "用 pay attention to 写一句提醒同学上课专心的句子。", undefined, "You should pay attention to the teacher in class.", "短语要整体使用，to 后接名词或动名词。"),
       englishSelfTestQuestion("判断", "Either you or he are wrong. 这句话是否正确？", undefined, "不正确，应改为 Either you or he is wrong.", "either...or... 作主语时谓语看靠近的 he。"),
     ],
+    2: [
+      englishSelfTestQuestion("翻译", "翻译：我宁愿穿蓝色也不穿粉色。", undefined, "I would rather wear blue than pink.", "would rather do A than do B；如果后面是颜色、名词，也可以直接接 blue、pink。"),
+      englishSelfTestQuestion("补全", "补全：She prefers reading ___ watching TV.", undefined, "to", "prefer doing A to doing B，前后两个动作形式要一致。"),
+      englishSelfTestQuestion("改错", "改错：He would rather to stay at home than go out.", undefined, "He would rather stay at home than go out.", "would rather 后接动词原形，不加 to。"),
+      englishSelfTestQuestion("造句", "用 influence our moods 写一句英文。", undefined, "Colours can influence our moods.", "短语要整体使用，注意 influence 是动词，后面直接接宾语。"),
+      englishSelfTestQuestion("翻译", "翻译：比起粉色，我更喜欢蓝色。", undefined, "I prefer blue to pink.", "prefer A to B 表示“比起 B 更喜欢 A”。"),
+    ],
   };
   if (custom[unitNumber]) {
     return custom[unitNumber].map((item, index) => ({ id: `eng-unit-${unitNumber}-self-test-${index + 1}`, ...item }));
   }
 
   return [
-    englishSelfTestQuestion("选择", `学习 ${firstNote?.title ?? title} 时，最应该检查哪一项？`, ["连接词、语序或搭配是否正确", "句子越长越好", "只要关键词出现就对"], "连接词、语序或搭配是否正确", firstNote?.checkpoint ?? "语法题要看结构，不只看关键词。"),
-    englishSelfTestQuestion("填空", `用本单元句型补全一句话：${firstPattern ?? "It is ... to do ..."}`, undefined, firstNote?.example ?? firstPattern ?? "It is useful to preview every day.", "先套句型，再替换主语、形容词或动词。"),
+    buildSelfTestOpeningQuestion(firstNote, firstPattern),
+    englishSelfTestQuestion("补全", `补全一句英文：${buildSelfTestCompletionPrompt(firstPattern, firstNote)}`, undefined, buildSelfTestCompletionAnswer(firstPattern, firstNote), "先看空格前后，再判断连接词、动词形式或固定搭配。"),
     englishSelfTestQuestion("造句", `用短语 ${firstPhrase ?? "本单元短语"} 写一句英文。`, undefined, `I can use ${firstPhrase ?? "this phrase"} in a sentence.`, "短语要按整体记忆，不拆开硬翻译。"),
-    englishSelfTestQuestion("判断", `预习 ${secondNote?.title ?? title} 后，怎样判断自己真的会用？`, undefined, secondNote?.drill ?? "能换一个主语和场景造句。", secondNote?.checkpoint ?? "能迁移使用，比只认得结构更重要。"),
+    englishSelfTestQuestion("改错", buildSelfTestCorrectionPrompt(secondNote), undefined, buildSelfTestCorrectionAnswer(secondNote), secondNote?.checkpoint ?? "改错题先看语序、连接词和搭配是否对。"),
     englishSelfTestQuestion("翻译", `把“我会用本单元词汇和句型表达一个完整意思”翻译成英文。`, undefined, "I can use the words and sentence patterns in this unit to express a complete idea.", thirdNote?.checkpoint ?? "翻译句要有主语、谓语和完整意思。"),
   ].map((item, index) => ({ id: `eng-unit-${unitNumber}-self-test-${index + 1}`, ...item }));
 }
@@ -3277,41 +3284,117 @@ function englishSelfTestQuestion(type, prompt, choices, answer, explanation) {
   return { type, prompt, choices, answer, explanation };
 }
 
+function buildSelfTestOpeningQuestion(note, fallbackPattern) {
+  const translationPrompt = buildSelfTestChinesePrompt(note);
+  if (translationPrompt) {
+    return englishSelfTestQuestion(
+      "翻译",
+      `翻译：${translationPrompt}`,
+      undefined,
+      note?.example ?? fallbackPattern ?? "It is useful to preview every day.",
+      note?.checkpoint ?? "翻译时先定句型，再替换主语、动词或形容词。",
+    );
+  }
+  return englishSelfTestQuestion(
+    "造句",
+    note?.drill ?? "用本单元第一个语法点写一个完整英文句子。",
+    undefined,
+    note?.example ?? fallbackPattern ?? "It is useful to preview every day.",
+    note?.checkpoint ?? "造句时先套核心结构，再换主语、动词或场景。",
+  );
+}
+
+function buildSelfTestChinesePrompt(note) {
+  if (!note) return "";
+  if (/because|原因/i.test(note.title)) return "因为下大雨，音乐会取消了。";
+  if (/although|though|让步/i.test(note.title)) return "虽然任务很难，他还是按时完成了。";
+  if (/if|unless/i.test(note.title)) return "如果你不快点，就会错过这个节目。";
+  if (/定语从句|who|which|that/i.test(note.title)) return "我昨天借的那本书很有用。";
+  if (/宾语从句/i.test(note.title)) return "我相信颜色能影响我们的心情。";
+  return "";
+}
+
+function buildSelfTestCompletionPrompt(pattern, note) {
+  if (/because|原因/i.test(note?.title ?? "")) return "The concert was cancelled ___ the heavy rain.";
+  if (/although|though|让步/i.test(note?.title ?? "")) return "___ the task was hard, he finished it on time.";
+  if (/if|unless/i.test(note?.title ?? "")) return "You will miss the programme ___ you hurry up.";
+  if (/定语从句|who|which|that/i.test(note?.title ?? "")) return "The book ___ I borrowed yesterday is useful.";
+  if (/宾语从句/i.test(note?.title ?? "")) return "I believe ___ colours can influence our moods.";
+  return pattern ? `${pattern}：${note?.example ?? ""}` : "It is ___ of you to help me.";
+}
+
+function buildSelfTestCompletionAnswer(pattern, note) {
+  if (/because|原因/i.test(note?.title ?? "")) return "because of";
+  if (/although|though|让步/i.test(note?.title ?? "")) return "Although / Though";
+  if (/if|unless/i.test(note?.title ?? "")) return "unless";
+  if (/定语从句|who|which|that/i.test(note?.title ?? "")) return "that / which";
+  if (/宾语从句/i.test(note?.title ?? "")) return "that";
+  return note?.example ?? pattern ?? "kind";
+}
+
+function buildSelfTestCorrectionPrompt(note) {
+  const title = note?.title ?? "";
+  if (/because|原因/i.test(title)) return "改错：Because it rained heavily, so I stayed at home.";
+  if (/although|though|让步/i.test(title)) return "改错：Although the task was hard, but he finished it.";
+  if (/if|unless/i.test(title)) return "改错：Unless you do not hurry up, you will miss it.";
+  if (/定语从句|who|which|that/i.test(title)) return "改错：The man which wears a coat is the suspect.";
+  if (/宾语从句|疑问词/i.test(title)) return "改错：Can you tell me when does the meeting start?";
+  return `改错：${note?.example ?? "I can use this sentence."}`;
+}
+
+function buildSelfTestCorrectionAnswer(note) {
+  const title = note?.title ?? "";
+  if (/because|原因/i.test(title)) return "Because it rained heavily, I stayed at home. / It rained heavily, so I stayed at home.";
+  if (/although|though|让步/i.test(title)) return "Although the task was hard, he finished it.";
+  if (/if|unless/i.test(title)) return "Unless you hurry up, you will miss it.";
+  if (/定语从句|who|which|that/i.test(title)) return "The man who wears a coat is the suspect.";
+  if (/宾语从句|疑问词/i.test(title)) return "Can you tell me when the meeting starts?";
+  return note?.example ?? "I can use this sentence.";
+}
+
 function buildGrammarMiniQuiz(unitNumber, note, noteIndex) {
   const baseId = `eng-unit-${unitNumber}-grammar-${noteIndex}`;
   const lowerTitle = note.title.toLowerCase();
-  let choices = ["连接词、语序和搭配都正确", "只要出现关键词就一定正确", "句子越长语法越完整"];
-  let answer = "连接词、语序和搭配都正确";
-  let question = `学习“${note.title}”后，哪一项检查更有用？`;
+  let answer = note.example;
+  let question = note.drill ?? `仿写：${note.example}`;
+  let explanation = note.checkpoint ?? note.explanation;
 
   if (/neither|either/.test(lowerTitle)) {
-    question = "使用 either...or... / neither...nor... 时，哪项最需要检查？";
-    choices = ["连接成分是否并列，作主语时谓语看靠近的一项", "两个词可以随便拆开使用", "neither 后面一定接复数谓语"];
-    answer = "连接成分是否并列，作主语时谓语看靠近的一项";
+    question = "改错：Neither you nor he are careless.";
+    answer = "Neither you nor he is careless.";
+    explanation = "neither...nor... 连接主语时，谓语看靠近谓语的 he。";
   } else if (/it is/.test(lowerTitle)) {
-    question = "It is + adj. + of sb. + to do sth. 最适合表达什么？";
-    choices = ["评价人的品质或行为特点", "说明地点在哪里", "表示将来要发生的动作"];
-    answer = "评价人的品质或行为特点";
+    question = "翻译：你帮我做作业真是太好了。";
+    answer = "It is kind of you to help me with my homework.";
+    explanation = "kind 评价人的品质或行为，用 of sb.。";
+  } else if (/prefer to do.*rather than do/.test(lowerTitle)) {
+    question = "改错：I prefer to stay at home rather than going shopping.";
+    answer = "I prefer to stay at home rather than go shopping.";
+    explanation = "prefer to do A rather than do B，rather than 后用动词原形。";
+  } else if (/would rather/.test(lowerTitle)) {
+    question = "翻译：我宁愿待在家也不愿出去。";
+    answer = "I would rather stay at home than go out.";
+    explanation = "would rather do A than do B，than 后接动词原形。";
   } else if (/prefer|would rather/.test(lowerTitle)) {
-    question = "表达偏好时，哪项搭配更需要注意？";
-    choices = ["prefer A to B / would rather do than do 的前后形式", "prefer 后面不能接任何动词", "than 后面必须接完整从句"];
-    answer = "prefer A to B / would rather do than do 的前后形式";
+    question = "补全：She prefers reading ___ watching TV.";
+    answer = "to";
+    explanation = "prefer doing A to doing B，两个动作形式要一致。";
   } else if (/宾语从句|疑问词/.test(note.title)) {
-    question = "宾语从句或“疑问词 + to do”预习时，哪项最关键？";
-    choices = ["连接词后保持陈述语序或正确非谓语结构", "疑问词后必须倒装", "从句里不需要主语"];
-    answer = "连接词后保持陈述语序或正确非谓语结构";
+    question = "改错：Can you tell me when does the meeting start?";
+    answer = "Can you tell me when the meeting starts?";
+    explanation = "疑问句进入宾语从句后，用陈述句语序。";
   } else if (/if|unless|时间|since|until|while|so that/.test(lowerTitle)) {
-    question = "状语从句类句型最容易错在哪里？";
-    choices = ["没有分清时间、条件、目的和主从句关系", "所有从句都只能放句首", "连词越多逻辑越清楚"];
-    answer = "没有分清时间、条件、目的和主从句关系";
+    question = "补全：You will miss the programme ___ you hurry up.";
+    answer = "unless";
+    explanation = "unless 表示“除非”，本身含有 if not 的意思。";
   } else if (/although|though|because|原因|让步/.test(lowerTitle)) {
-    question = "原因/让步关系的句子最应该避免什么？";
-    choices = ["逻辑重复或连词搭配冲突", "句子里出现 because", "句子有两个分句"];
-    answer = "逻辑重复或连词搭配冲突";
+    question = "改错：Although the task was hard, but he finished it.";
+    answer = "Although the task was hard, he finished it.";
+    explanation = "although / though 不和 but 连用。";
   } else if (/定语从句|who|which|that/.test(note.title)) {
-    question = "定语从句中 who / which / that 的作用是什么？";
-    choices = ["引导从句修饰前面的名词", "引导一个完全无关的新句子", "只能放在句子最后"];
-    answer = "引导从句修饰前面的名词";
+    question = "补全：The book ___ I borrowed yesterday is useful.";
+    answer = "that / which";
+    explanation = "先行词是物，关系代词可用 that 或 which。";
   }
 
   return {
@@ -3320,11 +3403,42 @@ function buildGrammarMiniQuiz(unitNumber, note, noteIndex) {
     unitNumber,
     grammarTitle: note.title,
     question,
-    choices,
+    choices: buildGrammarQuizChoices(question, answer),
     answer,
-    explanation: `${note.explanation} 预习后要能用例句检查：${note.checkpoint}`,
+    explanation,
     knowledgeTags: ["英语语法", note.title],
   };
+}
+
+function buildGrammarQuizChoices(question, answer) {
+  if (/补全：She prefers reading/.test(question)) {
+    return [answer, "than", "with"];
+  }
+  if (/补全：You will miss the programme/.test(question)) {
+    return [answer, "if", "because"];
+  }
+  if (/补全：The book/.test(question)) {
+    return [answer, "who", "where"];
+  }
+  if (/改错：Neither you nor he are careless/.test(question)) {
+    return [answer, "Neither you nor he are careless.", "Neither you or he is careless."];
+  }
+  if (/改错：I prefer to stay at home rather than going shopping/.test(question)) {
+    return [answer, "I prefer to staying at home rather than go shopping.", "I prefer stay at home rather than go shopping."];
+  }
+  if (/改错：Can you tell me when does the meeting start/.test(question)) {
+    return [answer, "Can you tell me when does the meeting start?", "Can you tell me when starts the meeting?"];
+  }
+  if (/改错：Although the task was hard/.test(question)) {
+    return [answer, "Although the task was hard, but he finished it.", "But although the task was hard, he finished it."];
+  }
+  if (/翻译：我宁愿待在家/.test(question)) {
+    return [answer, "I would rather to stay at home than go out.", "I would rather staying at home than going out."];
+  }
+  if (/翻译：你帮我做作业/.test(question)) {
+    return [answer, "It is kind for you to help me with my homework.", "It is kind of you helping me with my homework."];
+  }
+  return uniqueText([answer, "需要改成陈述句语序。", "需要保持前后结构一致。"]).slice(0, 3);
 }
 
 function enhanceLessonInteractions(curriculumData) {

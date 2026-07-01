@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>常州初三预习助手</title>
-    <link rel="stylesheet" href="./src/styles.css?v=20260701-choice2" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260701-mobile-gutter1" />
   </head>
   <body>
     <div class="app-shell">
@@ -27,13 +27,6 @@
       <main class="main-view">
         <section class="subject-view" data-view-panel="subject" hidden>
         <section class="panel subject-panel">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">课程预习库</p>
-              <h3 id="subjectTitle">英语</h3>
-            </div>
-            <span id="subjectVersion" class="badge"></span>
-          </div>
           <div id="activityLibrary" class="library-grid"></div>
           <div id="coverageSummary" class="coverage-summary" aria-label="内容覆盖检查"></div>
           <div id="reviewCoverage" class="review-coverage" aria-label="校对覆盖工作台"></div>
@@ -43,46 +36,6 @@
         </section>
 
         <section class="home-view" data-view-panel="home">
-        <section class="hero-panel" aria-label="今日学习概览">
-          <div>
-            <p class="eyebrow">今日 20-30 分钟</p>
-            <h2>今日预习</h2>
-            <div class="hero-actions">
-              <button id="continueButton" class="primary-button" type="button">开始今日预习</button>
-              <button id="resetButton" class="ghost-button" type="button">重置进度</button>
-            </div>
-          </div>
-          <div class="study-visual" aria-hidden="true">
-            <div class="orbital">
-              <span>英</span>
-              <span>数</span>
-              <span>语</span>
-              <span>理</span>
-              <span>化</span>
-            </div>
-            <div class="visual-card">
-              <strong>今日目标</strong>
-              <span>词卡 8 分钟</span>
-              <span>数学 19 分钟</span>
-            </div>
-          </div>
-        </section>
-
-        <section class="metrics-grid" aria-label="学习状态">
-          <article>
-            <span>连续</span>
-            <strong id="streakValue">0 天</strong>
-          </article>
-          <article>
-            <span>英语词卡</span>
-            <strong id="flashcardValue">0/0</strong>
-          </article>
-          <article>
-            <span>数学薄弱点</span>
-            <strong id="weakValue">暂无</strong>
-          </article>
-        </section>
-
         <section class="content-grid">
           <div class="panel today-panel">
             <div class="panel-heading">
@@ -90,7 +43,10 @@
                 <p class="eyebrow">今日清单</p>
                 <h3>今日预习清单</h3>
               </div>
-              <span id="modeBadge" class="badge">20-30 分钟</span>
+              <div class="panel-actions">
+                <span id="modeBadge" class="badge">20-30 分钟</span>
+                <button id="resetButton" class="ghost-button compact-button reset-button" type="button">重置</button>
+              </div>
             </div>
             <div id="todayPlan" class="task-list"></div>
             <div id="adaptiveSession" class="adaptive-session" aria-label="完整预习路线"></div>
@@ -258,6 +214,6 @@
       </main>
     </div>
 
-    <script type="module" src="./src/app.mjs?v=20260701-choice2"></script>
+    <script type="module" src="./src/app.mjs?v=20260701-mobile-gutter1"></script>
   </body>
 </html>
