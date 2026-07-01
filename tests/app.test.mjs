@@ -327,11 +327,14 @@ test("chemistry stem practice bank uses concrete experiment contexts instead of 
   assert.doesNotMatch(chemistryBankBlock, /最可靠|相关问题|哪一种判断|第一步|确认什么/);
 });
 
-test("physics quick-check distractors use clear condition-based wording", () => {
+test("physics quick checks use concrete physics questions instead of study-method wording", () => {
   const quickCheckBlock = contentSource.match(/function buildQuickCheck\(subjectId, chapter, lessonItem\) \{[\s\S]*?\nfunction buildEntryDiagnostic/)?.[0] ?? "";
+  const physicsQuickCheckBlock = contentSource.match(/function buildPhysicsQuickCheck\(chapter, lessonItem\) \{[\s\S]*?\nfunction physicsQuiz/)?.[0] ?? "";
 
-  assert.doesNotMatch(quickCheckBlock, /只背一个结论，不看条件/);
-  assert.match(quickCheckBlock, /直接套结论，忽略题设条件/);
+  assert.match(quickCheckBlock, /buildPhysicsQuickCheck/);
+  assert.match(physicsQuickCheckBlock, /杠杆|滑轮|做功|功率|电流表|欧姆定律/);
+  assert.doesNotMatch(quickCheckBlock, /学习“\$\{lessonItem\.title\}”时，怎样避免常见错误/);
+  assert.doesNotMatch(quickCheckBlock, /先画图或标变量|记住易错点|直接套结论|物理预习要把现象/);
 });
 
 test("math subject rendering does not reference undefined title helpers", () => {

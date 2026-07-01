@@ -3427,7 +3427,7 @@ function buildPreviewWorkflow(subjectId, chapter, lessonItem) {
     english: "词汇、短语和句型要从“认得”推进到“会说会写”。",
     math: "数学预习先看条件和方法，再用一道题检验步骤。",
     chinese: "语文预习把字词、文本依据和表达迁移连起来。",
-    physics: "物理预习要把现象、图示、变量和条件对应起来。",
+    physics: "先看本课考点，再用一道题检验规律是否会用。",
     chemistry: "化学预习按宏观现象、微观本质、符号表达和实验规范推进。",
   }[subjectId] ?? "先建立目标，再用回忆和练习检查。";
 
@@ -4852,7 +4852,7 @@ function buildPracticeSet(subjectId, chapter, lessonItem) {
         question: `处理“${lessonTitle}”相关题时，最先应该完成哪一步？`,
         choices: [`画图或标变量，确认：${firstPoint}`, "直接代入看到的第一个公式", "只背结论不看单位"],
         answer: `画图或标变量，确认：${firstPoint}`,
-        explanation: "物理预习要把情境、图示、物理量和条件对应起来，再计算或判断。",
+        explanation: "根据题设中的物理量、单位和条件选择关系式，再计算或判断。",
       },
       {
         difficulty: "迁移",
@@ -5583,13 +5583,13 @@ function buildQuickCheck(subjectId, chapter, lessonItem) {
   if (subjectId === "math") {
     return buildMathQuickCheck(chapter, lessonItem);
   }
+  if (subjectId === "physics") {
+    return buildPhysicsQuickCheck(chapter, lessonItem);
+  }
   if (subjectId === "chemistry") {
     return buildChemistryQuickCheck(chapter, lessonItem);
   }
 
-  const firstPoint = lessonItem.keyPoints?.[0] ?? lessonItem.title;
-  const secondPoint = lessonItem.keyPoints?.[1] ?? "整理依据";
-  const mistake = lessonItem.commonMistakes?.[0] ?? "只背结论，不说明依据";
   const checkBase = {
     id: `${lessonItem.id}-quick-check`,
     subject: subjectId,
@@ -5610,21 +5610,139 @@ function buildQuickCheck(subjectId, chapter, lessonItem) {
       answer: "文本词句和表达方法",
       explanation: "阅读理解要用文本证据支撑观点，预习时先找词句、结构和表达方法。",
     },
-    physics: {
-      question: `学习“${lessonItem.title}”时，怎样避免常见错误？`,
-      choices: [`先画图或标变量，再判断：${firstPoint}`, `记住易错点：${mistake}`, "直接套结论，忽略题设条件"],
-      answer: `先画图或标变量，再判断：${firstPoint}`,
-      explanation: "物理预习要把现象、图示、变量和条件连起来，不能只记一句结论。",
-    },
-    chemistry: {
-      question: `观察“${lessonItem.title}”里的实验或现象时，先检查什么？`,
-      choices: [`物质、现象和本质是否对应：${firstPoint}`, "只看有没有颜色变化", "只看答案是否眼熟"],
-      answer: `物质、现象和本质是否对应：${firstPoint}`,
-      explanation: "化学判断要回到物质、变化、实验现象和符号表达，避免只看表面现象。",
-    },
   };
 
   return { ...checkBase, ...templates[subjectId] };
+}
+
+function buildPhysicsQuickCheck(chapter, lessonItem) {
+  const bank = {
+    "phy-11-1": physicsQuiz(
+      "杠杆平衡时，动力为 20N，动力臂为 0.4m，阻力臂为 0.2m，阻力是多少？",
+      ["40N", "10N", "20N"],
+      "40N",
+      "由 F1L1=F2L2，20×0.4=F2×0.2，所以 F2=40N。",
+    ),
+    "phy-11-2": physicsQuiz(
+      "不计摩擦和滑轮重，用动滑轮匀速提升 80N 物体，拉力约为多少？",
+      ["40N", "80N", "160N"],
+      "40N",
+      "理想动滑轮由两段绳子承担重物，F=G/2=40N。",
+    ),
+    "phy-11-3": physicsQuiz(
+      "用 30N 的水平力推小车前进 4m，推力做功多少？",
+      ["120J", "7.5J", "34J"],
+      "120J",
+      "力和位移方向一致，W=Fs=30×4=120J。",
+    ),
+    "phy-11-4": physicsQuiz(
+      "某机器 5s 内做功 600J，功率是多少？",
+      ["120W", "3000W", "0.008W"],
+      "120W",
+      "P=W/t=600÷5=120W。",
+    ),
+    "phy-11-5": physicsQuiz(
+      "滑轮组把 100N 物体提升 2m，拉力做总功 250J，机械效率是多少？",
+      ["80%", "125%", "50%"],
+      "80%",
+      "有用功 W有=Gh=100×2=200J，η=200÷250=80%。",
+    ),
+    "phy-12-1": physicsQuiz(
+      "同一辆小车速度越大，撞击木块后木块移动越远，说明小车哪种能量越大？",
+      ["动能", "弹性势能", "内能"],
+      "动能",
+      "质量相同时，速度越大，动能越大，对木块做功越多。",
+    ),
+    "phy-12-2": physicsQuiz(
+      "热水和冷水混合时，热量主要从哪一方传向哪一方？",
+      ["热水传向冷水", "冷水传向热水", "两边都不传"],
+      "热水传向冷水",
+      "热传递方向总是从高温物体到低温物体。",
+    ),
+    "phy-12-3": physicsQuiz(
+      "2kg 水温度升高 5℃，c水=4.2×10³J/(kg·℃)，吸收热量是多少？",
+      ["4.2×10⁴J", "4.2×10³J", "10J"],
+      "4.2×10⁴J",
+      "Q=cmΔt=4.2×10³×2×5=4.2×10⁴J。",
+    ),
+    "phy-12-4": physicsQuiz(
+      "汽油机做功冲程中，主要能量转化是哪一项？",
+      ["内能转化为机械能", "机械能转化为内能", "电能转化为光能"],
+      "内能转化为机械能",
+      "燃气膨胀推动活塞做功，把内能转化为机械能。",
+    ),
+    "phy-13-1": physicsQuiz(
+      "导线直接连接电源两极，绕过用电器，这种状态称为什么？",
+      ["短路", "断路", "通路"],
+      "短路",
+      "短路时电路电流很大，可能损坏电源和导线。",
+    ),
+    "phy-13-2": physicsQuiz(
+      "家庭电路中，各用电器通常采用哪种连接方式？",
+      ["并联", "串联", "短路"],
+      "并联",
+      "并联各支路相对独立，各用电器能单独工作。",
+    ),
+    "phy-13-3": physicsQuiz(
+      "并联电路中两支路电流分别为 0.2A 和 0.3A，干路电流是多少？",
+      ["0.5A", "0.1A", "0.6A"],
+      "0.5A",
+      "并联电路干路电流等于各支路电流之和。",
+    ),
+    "phy-13-4": physicsQuiz(
+      "串联电路中两个灯泡两端电压分别为 2V 和 4V，电源电压是多少？",
+      ["6V", "2V", "4V"],
+      "6V",
+      "串联电路总电压等于各部分电压之和。",
+    ),
+    "phy-14-1": physicsQuiz(
+      "同种材料、长度相同的导线，横截面积越大，电阻通常怎样变化？",
+      ["越小", "越大", "不变"],
+      "越小",
+      "导线越粗，电流通过越容易，电阻越小。",
+    ),
+    "phy-14-2": physicsQuiz(
+      "滑动变阻器接入电路并能改变电阻时，通常应接哪种接线柱组合？",
+      ["一上一下", "只接两个上端", "只接两个下端"],
+      "一上一下",
+      "一上一下才能改变接入电路的电阻丝长度。",
+    ),
+    "phy-14-3": physicsQuiz(
+      "某电阻两端电压为 6V，通过电流为 0.3A，该电阻是多少？",
+      ["20Ω", "1.8Ω", "0.05Ω"],
+      "20Ω",
+      "R=U/I=6÷0.3=20Ω。",
+    ),
+    "phy-14-4": physicsQuiz(
+      "两个 10Ω 电阻串联，总电阻是多少？",
+      ["20Ω", "5Ω", "10Ω"],
+      "20Ω",
+      "串联电阻相加，R总=10+10=20Ω。",
+    ),
+  };
+  const quiz = bank[lessonItem.id] ?? physicsQuiz(
+    `${stripLessonNumber(lessonItem.title)}：下列哪项判断符合本课物理规律？`,
+    [lessonItem.keyPoints?.[0] ?? "题设条件与物理量关系对应", "只看关键词即可", "单位可以省略"],
+    lessonItem.keyPoints?.[0] ?? "题设条件与物理量关系对应",
+    "物理题要把具体情境、物理量和单位对应起来。",
+  );
+
+  return {
+    id: `${lessonItem.id}-quick-check`,
+    subject: "physics",
+    lessonId: lessonItem.id,
+    knowledgeTags: [chapter.title, lessonItem.title],
+    ...quiz,
+  };
+}
+
+function physicsQuiz(question, choices, answer, explanation) {
+  return {
+    question,
+    choices,
+    answer,
+    explanation,
+  };
 }
 
 function buildEntryDiagnostic(subjectId, chapter, lessonItem) {
