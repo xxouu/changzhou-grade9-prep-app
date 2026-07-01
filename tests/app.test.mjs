@@ -337,6 +337,34 @@ test("physics quick checks use concrete physics questions instead of study-metho
   assert.doesNotMatch(quickCheckBlock, /先画图或标变量|记住易错点|直接套结论|物理预习要把现象/);
 });
 
+test("STEM choice questions render compact selectable A B C options", () => {
+  const renderBlock = appSource.match(/function renderStemPracticeQuestion\(question\) \{[\s\S]*?\nfunction buildStemFillQuestion/)?.[0] ?? "";
+  const clickHandlerBlock = appSource.match(/els\.activityLibrary\.addEventListener\("click",[\s\S]*?\n  \}\);/)?.[0] ?? "";
+  const handlerBlock = appSource.match(/function handleStemChoiceAnswer\(button\) \{[\s\S]*?\nfunction findStemPracticeQuestion/)?.[0] ?? "";
+
+  assert.match(renderBlock, /stem-choice-options/);
+  assert.match(renderBlock, /isShortChoiceSet/);
+  assert.match(renderBlock, /isShort \? "short"/);
+  assert.match(renderBlock, /data-stem-choice/);
+  assert.match(renderBlock, /stem-choice-letter/);
+  assert.match(renderBlock, /CHOICE_LABELS/);
+  assert.match(renderBlock, /stemChoiceStatus/);
+  assert.doesNotMatch(renderBlock, /<ol class="stem-choice-list">/);
+  assert.match(clickHandlerBlock, /data-stem-choice/);
+  assert.match(clickHandlerBlock, /handleStemChoiceAnswer/);
+  assert.match(handlerBlock, /state\.stemChoiceAnswers/);
+  assert.match(handlerBlock, /renderStemPracticeQuestion/);
+});
+
+test("STEM choice option styles support one-row answers and result colors", () => {
+  const stemCss = stylesSource.match(/\.stem-choice-options \{[\s\S]*?\.stem-practice-card details \{/)?.[0] ?? "";
+
+  assert.match(stemCss, /\.stem-choice-options\.short\s*\{[\s\S]*?grid-template-columns:\s*repeat/);
+  assert.match(stemCss, /\.stem-choice-button\.correct/);
+  assert.match(stemCss, /\.stem-choice-button\.wrong/);
+  assert.match(stemCss, /\.stem-choice-letter/);
+});
+
 test("math subject rendering does not reference undefined title helpers", () => {
   const usesStripLessonNumber = appSource.includes("stripLessonNumber(");
 

@@ -3004,21 +3004,89 @@ body[data-view="home"] .version-card {
   line-height: 1.55;
 }
 
-.stem-choice-list {
+.stem-choice-options {
   display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  gap: 7px;
 }
 
-.stem-choice-list li {
+.stem-choice-options.short {
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+}
+
+.stem-choice-button {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 38px;
   padding: 8px 10px;
-  border-radius: 7px;
+  border: 1px solid transparent;
+  border-radius: 8px;
   background: #ffffff;
   color: #334155;
+  cursor: pointer;
+  font: inherit;
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.stem-choice-button:hover,
+.stem-choice-button:focus {
+  border-color: #fed7aa;
+  outline: none;
+}
+
+.stem-choice-button.correct {
+  border-color: #86efac;
+  background: #ecfdf5;
+  color: #166534;
+}
+
+.stem-choice-button.wrong {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.stem-choice-letter {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.stem-choice-button.correct .stem-choice-letter {
+  background: #bbf7d0;
+  color: #166534;
+}
+
+.stem-choice-button.wrong .stem-choice-letter {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.stem-choice-result {
+  width: fit-content;
+  padding: 5px 8px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.stem-choice-result.correct {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.stem-choice-result.wrong {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .stem-practice-card details {
@@ -7550,7 +7618,7 @@ body[data-view="home"] .version-card {
     align-items: flex-start;
   }
 
-  .stem-choice-list li {
+  .stem-choice-button {
     padding: 8px;
   }
 
@@ -7588,7 +7656,7 @@ body[data-view="home"] .version-card {
   }
 
   .stem-practice-card p,
-  .stem-choice-list li,
+  .stem-choice-button,
   .grammar-note p,
   .english-self-test-card p,
   .english-self-test-choices li,

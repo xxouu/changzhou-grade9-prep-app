@@ -90,8 +90,11 @@ const state = {
   knowledgeBankQuery: "",
   knowledgeBankStatus: "all",
   activeChapterBySubject: {},
+  stemChoiceAnswers: {},
   progress: loadProgress(),
 };
+
+const CHOICE_LABELS = ["A", "B", "C", "D", "E", "F"];
 
 const ENGLISH_PHRASE_TRANSLATIONS = {
   "eat up": "吃光，吃完",
@@ -333,6 +336,12 @@ function bindEvents() {
     const practiceButton = event.target.closest("[data-practice-question]");
     if (practiceButton) {
       handlePracticeAnswer(practiceButton);
+      return;
+    }
+
+    const stemChoiceButton = event.target.closest("[data-stem-choice]");
+    if (stemChoiceButton) {
+      handleStemChoiceAnswer(stemChoiceButton);
       return;
     }
 
@@ -1985,22 +1994,47 @@ function chemistryStemQuestion(id, type, level, concept, prompt, choices, answer
 }
 
 function renderStemPracticeQuestion(question) {
+  const selectedAnswer = state.stemChoiceAnswers[question.id];
+  const isShort = isShortChoiceSet(question.choices);
   const choices = question.choices?.length
     ? `
-      <ol class="stem-choice-list">
-        ${question.choices.map((choice) => `<li>${choice}</li>`).join("")}
-      </ol>
+      <div class="stem-choice-options ${isShort ? "short" : ""}" role="group" aria-label="${escapeAttribute(question.prompt)}">
+        ${question.choices
+          .map((choice, index) => {
+            const stemChoiceStatus = getStemChoiceStatus(choice, selectedAnswer, question.answer);
+            return `
+              <button
+                class="stem-choice-button ${stemChoiceStatus}"
+                data-stem-choice="${escapeAttribute(question.id)}"
+                data-answer="${escapeAttribute(choice)}"
+                type="button"
+              >
+                <span class="stem-choice-letter">${CHOICE_LABELS[index] ?? index + 1}</span>
+                <span>${choice}</span>
+              </button>
+            `;
+          })
+          .join("")}
+      </div>
+    `
+    : "";
+  const selectedFeedback = selectedAnswer
+    ? `
+      <p class="stem-choice-result ${selectedAnswer === question.answer ? "correct" : "wrong"}">
+        ${selectedAnswer === question.answer ? "答对了" : `正确答案：${question.answer}`}
+      </p>
     `
     : "";
 
   return `
-    <article class="stem-practice-card">
+    <article class="stem-practice-card" data-stem-question-card="${escapeAttribute(question.id)}">
       <div class="stem-practice-card-head">
         <span>${question.concept}</span>
         <em>${question.level}</em>
       </div>
       <p>${question.prompt}</p>
       ${choices}
+      ${selectedFeedback}
       <details>
         <summary>看答案和解析</summary>
         <p><b>答案</b>${question.answer}</p>
@@ -2010,6 +2044,26 @@ function renderStemPracticeQuestion(question) {
       <small>${question.sourceNote}</small>
     </article>
   `;
+}
+
+function isShortChoiceSet(choices = []) {
+  return choices.length > 1 && choices.every((choice) => String(choice).length <= 14);
+}
+
+function getStemChoiceStatus(choice, selectedAnswer, correctAnswer) {
+  if (!selectedAnswer) {
+    return "";
+  }
+
+  if (choice === correctAnswer) {
+    return "correct";
+  }
+
+  if (choice === selectedAnswer) {
+    return "wrong";
+  }
+
+  return "";
 }
 
 function buildStemFillQuestion(subjectId, chapter, lesson, index) {
@@ -3295,6 +3349,23 @@ function handlePracticeAnswer(button) {
   }
 }
 
+function handleStemChoiceAnswer(button) {
+  const questionId = button.dataset.stemChoice;
+  const question = findStemPracticeQuestion(questionId);
+  if (!question) {
+    return;
+  }
+
+  state.stemChoiceAnswers[questionId] = button.dataset.answer;
+
+  const card = button.closest("[data-stem-question-card]");
+  if (card) {
+    card.outerHTML = renderStemPracticeQuestion(question);
+  } else {
+    renderActivityLibrary();
+  }
+}
+
 function handleGrammarQuizAnswer(button) {
   const quizId = button.dataset.grammarQuiz;
   const quiz = findGrammarQuiz(quizId);
@@ -3818,6 +3889,22 @@ function findLessonByReflectionStep(stepId) {
       const lesson = chapter.lessons?.find((item) => item.reflectionCoach?.correctionSteps?.some((step) => step.id === stepId));
       if (lesson) {
         return lesson;
+      }
+    }
+  }
+  return undefined;
+}
+
+function findStemPracticeQuestion(questionId) {
+  for (const subjectId of subjectOrder) {
+    const subject = curriculum[subjectId];
+    for (const chapter of subject.chapters ?? []) {
+      const groups = buildStemPracticeGroups(subjectId, chapter);
+      for (const group of groups) {
+        const question = group.questions.find((item) => item.id === questionId);
+        if (question) {
+          return question;
+        }
       }
     }
   }
