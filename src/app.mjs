@@ -2035,7 +2035,7 @@ function renderStemPracticeQuestion(question) {
       <p>${question.prompt}</p>
       ${choices}
       ${selectedFeedback}
-      <details>
+      <details ${selectedAnswer ? "open" : ""}>
         <summary>看答案和解析</summary>
         <p><b>答案</b>${question.answer}</p>
         <p><b>解析</b>${question.explanation}</p>

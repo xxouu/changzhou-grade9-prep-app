@@ -365,6 +365,13 @@ test("STEM choice option styles support one-row answers and result colors", () =
   assert.match(stemCss, /\.stem-choice-letter/);
 });
 
+test("STEM choice answers auto-open the explanation after selection", () => {
+  const renderBlock = appSource.match(/function renderStemPracticeQuestion\(question\) \{[\s\S]*?\nfunction buildStemFillQuestion/)?.[0] ?? "";
+
+  assert.match(renderBlock, /selectedAnswer/);
+  assert.match(renderBlock, /<details \$\{selectedAnswer \? "open" : ""\}>/);
+});
+
 test("math subject rendering does not reference undefined title helpers", () => {
   const usesStripLessonNumber = appSource.includes("stripLessonNumber(");
 
